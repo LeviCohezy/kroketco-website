@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Kroketco Belgium brand palette */
+  --light-blue: #bfe6ff;
+  --orange: #ff8a00;
+  --forest: #0e4b3a;
+  --cream: #fff3e2;
+  --lime: #c7e36a;
+
+  /* Playful UGC card frame colors (brand core + accent extras) */
+  --frame-lime: #c7e36a;
+  --frame-pink: #f4a7c3;
+  --frame-purple: #a88be0;
+  --frame-orange: #ff8a00;
+  --frame-gold: #f2c14e;
+  --frame-blue: #3e6be6;
+  --frame-green: #0e4b3a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-light-blue: var(--light-blue);
+  --color-orange: var(--orange);
+  --color-forest: var(--forest);
+  --color-cream: var(--cream);
+  --color-lime: var(--lime);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-frame-lime: var(--frame-lime);
+  --color-frame-pink: var(--frame-pink);
+  --color-frame-purple: var(--frame-purple);
+  --color-frame-orange: var(--frame-orange);
+  --color-frame-gold: var(--frame-gold);
+  --color-frame-blue: var(--frame-blue);
+  --color-frame-green: var(--frame-green);
+
+  --font-display: var(--font-baloo);
+  --font-sans: var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--light-blue);
+  color: var(--forest);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
+/* Infinite horizontal marquee for the UGC card row. The track holds two
+   identical card sets; shifting it -50% loops seamlessly. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 45s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/* v3 — scroll-reveal word colouring (grey -> black, accents -> orange) */
+.rw {
+  color: #cbccce;
+  transition: color 0.4s ease;
+}
+.rw.on {
+  color: #141414;
+}
+.rw.accent.on {
+  color: #ff8a00;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rw { color: #141414; }
+  .rw.accent { color: #ff8a00; }
 }
