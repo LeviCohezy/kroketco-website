@@ -1,5 +1,4 @@
 import Image from "next/image";
-import VersionSwitch from "@/components/VersionSwitch";
 
 /**
  * UGC card row — real Kroketco Belgium croquette photography from /public/ugc/.
@@ -175,8 +174,6 @@ export default function Hero() {
           </ul>
         </div>
       </div>
-
-      <VersionSwitch active="v1" />
     </main>
   );
 }
