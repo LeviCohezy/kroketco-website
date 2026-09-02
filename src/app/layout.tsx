@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Baloo_2, Inter } from "next/font/google";
+import { Baloo_2, Inter, Oswald } from "next/font/google";
 import "./globals.css";
 
 // Rounded, chunky display face for the Kroketco brand voice.
@@ -13,16 +13,24 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+// Condensed display face for the poster-style hero headline.
+const oswald = Oswald({
+  weight: ["600"],
+  subsets: ["latin"],
+  variable: "--font-oswald",
+});
+
 export const metadata: Metadata = {
-  title: "Kroketco — Pak het. Dip het. Proef het.",
-  description: "Verse Belgische kroketten & puree. Krokant, ambachtelijk en romig — pak het, dip het, proef het.",
+  title: "Kroketco — Elke hap een feest",
+  description:
+    "Ambachtelijke Belgische kroketten. Vers gedraaid, goudbruin gebakken. Schuif aan en proef het verschil.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${baloo.variable} ${inter.variable} h-full antialiased`}
+      className={`${baloo.variable} ${inter.variable} ${oswald.variable} h-full antialiased`}
     >
       <body className="min-h-full">{children}</body>
     </html>
