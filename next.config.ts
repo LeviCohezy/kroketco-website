@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   basePath: onPages ? repo : "",
   assetPrefix: onPages ? repo : "",
+  env: { NEXT_PUBLIC_BASE_PATH: onPages ? repo : "" },
 };
 
 export default nextConfig;
