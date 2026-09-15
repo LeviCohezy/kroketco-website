@@ -1,0 +1,222 @@
+Site Structure
+Pagina's (Sitemap)
+Home
+About Us
+Products
+Product detail
+Partners
+Detailpage
+News
+Detailpage
+Groendal
+FAQ
+Contact
+
+Pagina-inhoud & Secties
+1. Home
+Hero wich shows the croquettes, maybe use a bg video some.
+Section wich shows we sell croquettes and mashed potatoes.
+Our products
+Our qualities
+Groendal
+-reviews
+CTA
+NEWS
+FAQ
+
+2. About us
+nice hero
+our values
+usp our qualities
+history of Kroketco (interactive)
+Current information about us
+contact cta
+
+3. Partners
+hero
+why partners are so important to us.
+partners listed per section.
+
+4. Partner Detail
+Just hero with partner Image
+who are they
+our partnership
+how it all started
+
+
+5. News
+nice short hero
+grid or list of news items
+at bottom form for newsletter
+
+6. Newsdetail
+just good looking page for news, make sure it has text, Image full width or centered or left, a card with alert or extra info, a quote and a table
+
+
+7. Products
+hero section 
+per section a product or a list grid with products, each product will have its color.
+filter to filter the products
+bottom email letter form
+
+iNSPIRATION
+https://nl.mccain.be/producten/ like this but with packaged croquette you see in brandboard.
+in sections zig zag left right. image of product on one side, text or usp or bdge and decoration other side with cta. Each section other accent color.
+
+8. Product detail
+hero with big product image
+a sentence about product or section with short story about the product
+all the product info
+why choose our product
+contact form
+other featured products
+
+
+
+
+9. Groendal
+they are a partner of the company, they one price for world best cheese. 
+- their story
+how we met
+cheese croquettes and butter and local products.
+slider of products with their cheese or butter.
+cta form
+their link https://www.tgroendal.be/nl
+
+
+Product List Kroketco
+Potato Croquettes
+Round shape yellow breadcrumbs
+Per 12
+Per 20
+Per 50
+Round shape brown breadcrumbs
+Per 12
+Per 20
+Per 50
+Straight shape yellow breadcrumbs
+Loose per 100
+Loose per 150
+Per 12
+Per 20
+Per 50
+Frozen per 50
+Mini croquette
+Loose per 200
+Frozen per 100
+Mashed Potatoes
+Mashed Potatoes
+Tubes per 2 kg
+Tubes per 475 g
+Duchess Potatoes per 6
+Small tubs of mashed potato per 450 g
+Culinary Croquettes
+Shrimp croquette 70 g
+Packed per 15
+Packed per 4
+Frozen per 24
+Cheese croquette
+Packed per 12
+Packed per 4
+Frozen per 20
+Superano ham croquette
+Packed per 15
+Packed per 4
+Frozen per 24
+Chicken croquette
+Packed per 15
+Packed per 4
+Frozen per 24
+Roeselare Cheese Croquette
+Packed per 4
+Frozen per 14 (2x tray)
+Mini shrimp croquette
+Packed per 24
+Frozen per 60
+Mini cheese croquette
+Packed per 24
+Frozen per 60
+Mini Superano ham croquette
+Packed per 24
+Frozen per 60
+
+
+Section 1: General company information
+When was the company officially founded? January 1, 1996
+
+
+Can you provide a brief history of the company?
+In 1996, Lieven Vinckier took over Mr. Roets' small croquette company. Back then, potatoes were still cooked in a small pot on a gas stove and croquettes were made like grandmother did with a mille-croquettes, all in a small shed belonging to father Noël Vinckier. This gradually changed to small machines to produce the croquettes. After a few years, cheese and shrimp croquettes were also produced in-house.
+In 2008, the company moved to a new facility in Roeselare.
+In 2012, Lieven took over the current Superkroket from Erik Termote and Lieva Debaets. This added a second type of croquette made in a slightly different way. In 2023, alongside the various types of croquettes, fresh mashed potatoes were launched, which we continue to reinvent today in different flavors, sizes, and packaging.
+
+Where is the company located and in which locations are you active? Roeselare industrial zone near Mammoet. Regina Wautersweg 2
+Can you tell us more about the production facilities or factory? We are a modern food processing company constantly striving for top quality and hygiene.
+
+What sets Kroketco apart from the competition? What makes you unique?
+Only the best is good enough. We start with quality products and end with quality products.
+No chemical additives, pure nature. Real potatoes, grey shrimp, local cheeses from Groendal.
+To what extent do you use local products or suppliers?
+Groendal - cheese and butter are truly local.
+What does the current team structure look like? Quite small
+Dad is the boss
+Me and mom are vice bosses
+About 2 permanent drivers
+About 2 permanent factory workers
+
+Section 2: Product range
+What is the official product name?
+Can you provide a detailed description of the product?
+What are the main ingredients used?
+Which allergens does the product contain?
+Which category does this specific product fall under?
+What is the recommended preparation method for both retail and professional customers?
+Are there specific product partners linked to this item (e.g. Groendaal)?
+
+
+Section 3: Partners and Collaborations
+Which partners do you currently work with and what does this collaboration involve?
+steen food masters
+wholesaler of fresh food products. Steen Food Masters is a wholesaler with a wide range of food and non-food products. At Steen Food Masters you will find everything you are looking for and more. From meats and fish to dry food, prepared meals, dairy, frozen food, salads, potato products, sauces, spices, tapas, desserts, and non-food products such as packaging and cleaning agents. 
+
+huppa oostende and wortegem-petegem
+wholesaler of fresh food products
+More than a
+wholesaler.
+Say the word 'fresh', and you think of us. Because we are more than a wholesaler. We are a leading, innovative fresh produce platform for local, national, and international brands alike.
+A platform on which we collaborate sustainably with our customers, suppliers, employees, and partners. Long-term. Generating growth for all parties. We are this today, and we are determined to remain so tomorrow.
+
+rafina 
+wholesaler of fresh food products
+Rafina is an established Belgian fresh food wholesaler from Lauwe, active since 1954. The company supplies a very broad range to customers including butchers, cheese shops, caterers, and other fresh food stores. Today, the offering comprises more than 7,000 products, including deli meats, cheeses, salads, prepared meals, frozen items, and other fresh produce.
+Rafina sets itself apart primarily through own transportation, a dedicated sales representative per customer, an extensive purchasing department, and a strong focus on local and artisanal products. In recent years, the company grew further through acquisitions such as Triporteur in 2017 and ARCA and Deketelaere-Maes Viswaren in 2024.
+
+duva fruit
+Duva Fruit NV is a West-Flemish wholesaler in fresh vegetables, fruit, and related food products, based in Gistel. The company was founded in 1992 and currently supplies hundreds of food professionals in West and East Flanders.
+Duva Fruit focuses primarily on hospitality, butcher shops, caterers, institutional kitchens, bakeries, catering, and fresh food stores. In addition to fruit and vegetables, it offers a broad complementary assortment including pre-cut vegetables, potato products, mashed potatoes, croquettes, nuts, dried fruit, fruit juices, sprouts, and microgreens.
+A key differentiator is the strong logistics service: Duva operates with its own refrigerated transport and makes hundreds of daily deliveries in the region. For hospitality clients, same-day delivery is also available.
+
+vlaemynck natuurlijk
+Vlaemynck Natuurlijk is a family business and professional wholesaler in fresh vegetables, fruit, and potato products, operating out of Veurne. The company now spans four generations and supplies professional kitchens across West and East Flanders.
+Vlaemynck combines a broad fresh product range with an in-house cutting department and dedicated fleet. They supply clients including hospitality, institutional kitchens, healthcare facilities, caterers, and food businesses, offering processed potatoes, herbs, juices, nuts, cooked vegetables, and other complementary items alongside fruit and vegetables.
+A key asset is their fast and flexible logistics: customers can place orders late, and Vlaemynck handles daily deliveries using their own transport. Furthermore, the company operates according to IFS quality standards.
+
+biervliet freez center 
+wholesaler of fresh and frozen food products
+Biervliet Freez Center Bvba is a West-Flemish food wholesaler based in Diksmuide, specializing in frozen products and a broad assortment for commercial clients. They cater to hospitality, butchers, caterers, bakeries, institutional kitchens, catering services, associations, and businesses.
+The product offering is extensive and includes frozen vegetables and fruit, fries, potato products, deep-fried snacks, artisanal croquettes, meat, poultry, fish, desserts, ice cream, and dry goods.
+A major strength is their strong regional distribution. Freez Center delivers daily across the Belgian coast and West Flanders, backed by a quick ordering and delivery process. The company is also affiliated with AZ Food Horecagrossiers.
+
+fresh by vero
+wholesaler of fresh food products, fruit, and vegetables. Fresh By Vero is a West-Flemish fresh produce wholesaler from Poperinge, active in the fruit and vegetables sector. The business is located at Beneluxlaan 21 in Poperinge and is registered as a fruit and vegetable enterprise.
+
+
+Can you provide a short introduction or overview of your main partners?
+
+Section 4: Services and Process
+Do you target the commercial market, consumers, or both, and how does the request process work? Ordering can be done via our partners, but feel free to call or email us directly and we can arrange samples through our channels.
+We primarily target the professional market; we strive to have our products available in as many places as possible so that people across Belgium can enjoy them.
+Our products can be found at supermarkets, butchers, caterers, hospitality establishments, and specialty food stores.
+Which events do you attend and what are the options for renting a Kroketco food truck? We don't have one yet, but the idea definitely got me thinking!
+
+

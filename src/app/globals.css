@@ -81,3 +81,93 @@ body {
   .rw { color: #141414; }
   .rw.accent { color: #ff8a00; }
 }
+
+/* v3 — hero intro choreography (plays once on first load).
+   Animation props live inside no-preference so reduced-motion users get the
+   final state instantly. JS strips the classes on animationend so :hover
+   transforms keep working afterwards. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-anim {
+    animation-duration: 0.9s;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .hero-rise { animation-name: heroRise; }
+  .hero-drop { animation-name: heroDrop; }
+  .hero-slide { animation-name: heroSlide; }
+  .hero-pop {
+    animation-name: heroPop;
+    animation-duration: 0.7s;
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .hero-zoom {
+    animation-name: heroZoom;
+    animation-duration: 1.9s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes heroDrop {
+  from { opacity: 0; transform: translateY(-28px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes heroSlide {
+  from { opacity: 0; transform: translateX(64px) scale(0.95); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes heroPop {
+  0% { opacity: 0; transform: scale(0.3) rotate(-45deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-14deg); }
+}
+@keyframes heroZoom {
+  from { opacity: 0.35; transform: scale(1.12); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Surface toggle — flip every white section to warm beige when the nav switch
+   sets data-theme="beige" on <html>. Higher specificity than Tailwind's .bg-white. */
+:root {
+  --surface: #ffffff;
+}
+html[data-theme="beige"] {
+  --surface: #fff3e2;
+}
+html[data-theme="beige"] :is(section, main).bg-white {
+  background-color: #fff3e2;
+}
+
+/* v3 — generic scroll-into-view reveal (fade + rise). JS adds .in when the
+   element enters the viewport; stagger via an inline transition-delay. */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* v3 — partners list paging (each row rises + fades on page switch) */
+@keyframes partnerRowIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.partner-row {
+  animation: partnerRowIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .partner-row { animation: none; }
+}
