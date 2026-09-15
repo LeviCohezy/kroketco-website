@@ -52,16 +52,18 @@ export default function Nav() {
     <>
       <header className="fixed inset-x-0 top-6 z-50 px-6 sm:px-12 lg:px-16">
         <nav className={`relative flex w-full items-center justify-between rounded-full py-3 pl-7 pr-3 text-forest shadow-[0_12px_34px_rgba(0,0,0,0.18)] ${white ? "bg-white" : "bg-light-blue"}`}>
-          <div className="hidden items-center gap-6 text-[13px] font-bold uppercase tracking-[0.08em] lg:flex">
-            {LINKS.map((l) => (
-              <a key={l.href} href={l.href} className="transition-opacity hover:opacity-70">
-                {l.label}
-              </a>
-            ))}
+          <div className="flex items-center gap-6">
+            <a href="/">
+              <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={2000} height={667} priority className="h-8 w-auto sm:h-9" />
+            </a>
+            <div className="hidden items-center gap-6 text-[13px] font-bold uppercase tracking-[0.08em] lg:flex">
+              {LINKS.map((l) => (
+                <a key={l.href} href={l.href} className="transition-opacity hover:opacity-70">
+                  {l.label}
+                </a>
+              ))}
+            </div>
           </div>
-          <a href="/" className="absolute left-1/2 -translate-x-1/2">
-            <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={2000} height={667} priority className="h-8 w-auto sm:h-9" />
-          </a>
           <div className="flex items-center gap-3">
             <button
               onClick={toggleTheme}
@@ -114,7 +116,7 @@ export default function Nav() {
           </button>
         </div>
 
-        <nav className="flex flex-1 flex-col items-end justify-center gap-6 px-8 text-right sm:px-14">
+        <nav className="flex flex-1 flex-col items-start justify-center gap-6 px-8 text-left sm:px-14">
           {LINKS.map((l) => (
             <a
               key={l.href}
@@ -128,7 +130,7 @@ export default function Nav() {
           ))}
         </nav>
 
-        <div className="px-8 pb-10 text-right sm:px-14">
+        <div className="px-8 pb-10 text-left sm:px-14">
           <a
             href="/#contact"
             onClick={() => setMenuOpen(false)}
