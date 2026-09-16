@@ -1,0 +1,7 @@
+:HL["/kroketco-website/_next/static/chunks/36w-dmz1p78yo.css","style"]
+:HL["/kroketco-website/_next/static/media/69eeeba135b38302-s.p.3mmiv2lq_sar0.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/kroketco-website/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/kroketco-website/_next/static/media/d7d9c82e455b419c-s.p.2zp15__9k16__.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/partners/cards/duva.png","image"]
+:HL["/hero/logo-kroketco.png","image"]
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"partners","param":null,"prefetchHints":4192,"slots":{"children":{"name":"slug","param":{"type":"d","key":"duva-fruit","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"XUwABxzicQ3tCIr7hBj8B"}
