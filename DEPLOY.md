@@ -1,0 +1,104 @@
+# Deploying to a VPS with Coolify
+
+This app is a standalone Next.js server in Docker. It stores everything on disk:
+
+- SQLite database → `/data/cms.db`
+- Uploaded images → `/data/uploads`
+
+**Because of this, the host MUST give the container a persistent volume mounted at `/data`.**
+Without it, all products / partners / posts / images are lost on every redeploy.
+
+The recommended host is a cheap **Hetzner Cloud VPS** running **Coolify** (a free,
+self-hosted deploy panel). One small VPS can host many sites this way.
+
+---
+
+## 1. Create the server (Hetzner Cloud)
+
+1. Sign up at https://console.hetzner.cloud and create a **Project**.
+2. **Add Server**:
+   - Location: closest to your visitors (e.g. Nuremberg/Falkenstein for EU).
+   - Image: **Ubuntu 24.04**.
+   - Type: **CX22** (2 vCPU / 4 GB RAM) — ~€4.5/mo, plenty for several small sites.
+   - Add your SSH key (or set a root password).
+3. Create it and note the server's **public IP**.
+
+## 2. Install Coolify
+
+SSH into the server and run the official installer:
+
+```bash
+ssh root@YOUR_SERVER_IP
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+```
+
+When it finishes, open `http://YOUR_SERVER_IP:8000` in your browser and create the
+admin account. (Coolify installs Docker + a Traefik reverse proxy for you.)
+
+## 3. Point your domain
+
+In your domain registrar's DNS, add an **A record** for the hostname you want
+(e.g. `kroketco.be` and/or `www`) pointing to `YOUR_SERVER_IP`. DNS can take a
+few minutes to propagate. HTTPS certificates are issued automatically by Coolify
+once the domain resolves.
+
+## 4. Add this app in Coolify
+
+1. In Coolify: **Project → + New → Application**.
+2. **Source**: connect your Git repo (GitHub/GitLab) and pick this repository +
+   branch, **or** choose "Public/Private Repository" with the clone URL.
+3. **Build Pack**: **Dockerfile** (Coolify auto-detects the `Dockerfile` in the repo root).
+4. **Port**: `3000` (auto-detected from `EXPOSE 3000`).
+5. **Domain**: enter your domain (e.g. `https://kroketco.be`). Coolify handles HTTPS.
+
+## 5. Add the persistent volume (critical)
+
+In the app's **Storages** tab, add a **Volume Mount**:
+
+- Name: `cms-data`
+- Destination Path (in container): `/data`
+
+This is the equivalent of the `cms-data` volume in `docker-compose.yml`.
+
+## 6. Set environment variables
+
+In the app's **Environment Variables** tab (see `.env.example`):
+
+| Key | Value |
+|---|---|
+| `ADMIN_PASSWORD` | a long, random password (**change from the dev default!**) |
+| `CMS_DB_PATH` | `/data/cms.db` |
+| `UPLOAD_DIR` | `/data/uploads` |
+
+(`PORT=3000`, `HOSTNAME=0.0.0.0` are already baked into the Dockerfile.)
+
+## 7. Deploy
+
+Click **Deploy**. On first boot the app creates the SQLite schema and seeds the
+initial content automatically. Visit your domain — the site is live, and
+`https://your-domain/admin` is the CMS (log in with `ADMIN_PASSWORD`).
+
+Future deploys: push to the branch (enable **Auto Deploy** / webhook) or hit
+**Redeploy**. Your `/data` volume — DB and uploads — persists across deploys.
+
+---
+
+## Hosting more sites on the same server
+
+Repeat steps 4–7 for each new site (new Application in Coolify, its own domain,
+its own volume). One CX22 comfortably runs a dozen or so small sites; bump to a
+larger Hetzner type if you outgrow it.
+
+## Backups
+
+Your content lives in the `/data` volume. Back it up regularly, e.g. a nightly
+cron on the VPS that copies the volume's DB + uploads off-box:
+
+```bash
+# Example: dump the volume to a timestamped tarball
+docker run --rm -v cms-data:/data -v /root/backups:/backup alpine \
+  tar czf /backup/cms-$(date +%F).tar.gz -C /data .
+```
+
+Then sync `/root/backups` to object storage (Hetzner Storage Box, S3, etc.).
+Coolify also offers scheduled backups in its UI.
