@@ -1,17 +1,79 @@
-# Deploying to a VPS with Coolify
+# Deploying Kroketco
 
-This app is a standalone Next.js server in Docker. It stores everything on disk:
+This app is a Next.js server (not a static site). It stores everything on disk:
 
-- SQLite database → `/data/cms.db`
-- Uploaded images → `/data/uploads`
+- SQLite database → `cms.db`
+- Uploaded images → `uploads/`
 
-**Because of this, the host MUST give the container a persistent volume mounted at `/data`.**
-Without it, all products / partners / posts / images are lost on every redeploy.
+**The one hard rule for any host:** the database + uploads must live in a location
+that **survives redeploys**. Otherwise all products / partners / posts / images are
+lost every time you deploy. Where those files go is controlled by two env vars:
 
-The recommended host is a cheap **Hetzner Cloud VPS** running **Coolify** (a free,
-self-hosted deploy panel). One small VPS can host many sites this way.
+- `CMS_DB_PATH` — full path to the SQLite file
+- `UPLOAD_DIR` — folder for uploaded images
+
+There are two ways to host it:
+
+- **Option A — Hostinger Business "Web Apps"** (deploy from Git). Free if you already
+  have a Business plan. Try this first.
+- **Option B — VPS + Coolify** (runs the Docker image). Paid, but guaranteed to work
+  and can host many sites on one box. Use this if Option A fails.
 
 ---
+
+# Option A — Hostinger Business (Web Apps, deploy from Git)
+
+Available on Hostinger **Business plans and up**. It connects your GitHub repo and
+runs `npm install → build → start` on Hostinger's Node runtime (it does **not** use
+the `Dockerfile`).
+
+### Before you start — two things that can break this app here
+
+1. **`better-sqlite3` is a native (C++) module.** It compiles cleanly in the Docker
+   image (which installs `python3/make/g++`), but on shared hosting it depends on
+   whether their Node build allows native compilation. If the build log errors on
+   `better-sqlite3`, Option A won't work → use Option B.
+2. **Persistence.** A Git redeploy replaces the app folder, so the DB/uploads must be
+   stored **outside** the project directory (see the env vars below).
+
+### Steps
+
+1. **hPanel → Websites → "Deploy your Web App" → Get started.**
+2. **Connect GitHub / GitLab**, pick this repository and the branch you deploy
+   (e.g. `v3`). Let it detect **Next.js**.
+3. Ensure the **Node.js version is 20+** (Next 16 requires it).
+4. Set **Environment Variables** (use your real home path — hPanel shows it, it looks
+   like `/home/uXXXXXXXXX`):
+
+   | Key | Value |
+   |---|---|
+   | `ADMIN_PASSWORD` | a long, random password (**not** the dev default) |
+   | `CMS_DB_PATH` | `/home/uXXXXXXXXX/cms-data/cms.db` |
+   | `UPLOAD_DIR` | `/home/uXXXXXXXXX/cms-data/uploads` |
+
+   The key point: `cms-data` sits **outside** the deployed project folder, so it
+   isn't wiped on redeploy. Create that folder if the panel doesn't auto-create it.
+5. **Deploy** and watch the build log:
+   - Builds + site loads + `/admin` works → done. Free hosting. 🎉
+   - Errors on `better-sqlite3`, or the DB isn't writable/persistent → switch to
+     **Option B** below.
+6. Point your domain at the site in hPanel (HTTPS is handled by Hostinger).
+
+> Note: this path bundles content into the same account as your other Business
+> sites. To confirm persistence, add a test product in `/admin`, redeploy, and check
+> it's still there.
+
+---
+
+# Option B — VPS + Coolify
+
+Runs your Docker image as-is, with a real persistent volume. Guaranteed to work
+(native module + persistence are handled by the `Dockerfile`), and one small VPS can
+host many sites. Good hosts: **Hostinger KVM 2** (pick the Coolify template at
+checkout) or a **Hetzner CX22** (EU location, cheapest).
+
+On this route the data lives in a volume mounted at **`/data`** (matching the
+`Dockerfile` defaults `CMS_DB_PATH=/data/cms.db`, `UPLOAD_DIR=/data/uploads`).
 
 ## 1. Create the server (Hetzner Cloud)
 
