@@ -2,8 +2,8 @@
 
 import { PageFooter } from "../_ui/SiteChrome";
 import ContactForm from "../_ui/ContactForm";
-import Multiline from "../_ui/Multiline";
-import { useContent } from "../_ui/ContentProvider";
+import { useContent, useEditor } from "../_ui/ContentProvider";
+import { EditableText, EditableImage, EditableVideo } from "@/app/_ui/edit/Editable";
 
 // Presentation shape for the partners grid. Data comes from the CMS DB via the
 // server page (see page.tsx).
@@ -115,6 +115,7 @@ function ScallopBadge({ logo, alt }: { logo: string; alt: string }) {
 
 export default function PartnersView({ partners }: { partners: PartnerCard[] }) {
   const c = COMBOS[0];
+  const { editing } = useEditor();
   const hero = useContent("partners.hero");
   const list = useContent("partners.list");
   const contact = useContent("partners.contact");
@@ -127,42 +128,59 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="max-w-3xl text-[clamp(2.4rem,7vw,6rem)] uppercase leading-[0.9] tracking-[0.01em]" style={OSWALD}>
-                {hero.titleLine1}
+                <EditableText as="span" section="partners.hero" field="titleLine1" />
                 <br />
-                {hero.titleLine2}
+                <EditableText as="span" section="partners.hero" field="titleLine2" />
               </h1>
             </div>
-            <p className="max-w-sm text-forest/75 lg:pb-3 lg:text-right">
-              <Multiline text={hero.text} />
-            </p>
+            <EditableText
+              as="p"
+              section="partners.hero"
+              field="text"
+              className="max-w-sm text-forest/75 lg:pb-3 lg:text-right"
+            />
           </div>
         </div>
 
         {/* partner video — full width */}
         <div className="relative w-full">
-          <video
-            className="block aspect-square w-full object-cover sm:aspect-[16/6]"
-            autoPlay
-            muted
-            loop
-            playsInline
+          <EditableVideo
+            section="partners.hero"
+            field="video"
             poster={hero.poster || undefined}
-            key={hero.video}
-          >
-            {hero.video && <source src={hero.video} type="video/mp4" />}
-          </video>
-          {hero.sticker && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={hero.sticker}
+            className="block aspect-square w-full object-cover sm:aspect-[16/6]"
+          />
+          {(editing || hero.sticker) && (
+            <EditableImage
+              section="partners.hero"
+              field="sticker"
               alt={hero.stickerAlt}
               className="absolute right-4 top-4 w-[clamp(84px,11vw,150px)] rotate-[9deg] drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)] sm:right-10 sm:top-8"
             />
           )}
 
-          {words.length > 0 && (
+          {(editing ? hero.marquee.length > 0 : words.length > 0) && (
             <div className="pointer-events-none absolute inset-x-0 bottom-0">
               <CurvedMarquee words={words} band={c.band} ink={c.ink} surface={c.section} />
+            </div>
+          )}
+
+          {/* Edit-only strip: the marquee words above bake into an SVG textPath
+              and cannot be edited in place, so expose them here for editing. */}
+          {editing && (
+            <div className="absolute inset-x-0 bottom-2 z-20 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 px-6">
+              {hero.marquee.map((_, i) => (
+                <EditableText
+                  key={i}
+                  as="span"
+                  section="partners.hero"
+                  listField="marquee"
+                  index={i}
+                  itemKey="text"
+                  className="rounded bg-white/90 px-2 py-0.5 text-sm font-semibold uppercase tracking-[0.04em] text-forest"
+                  style={OSWALD}
+                />
+              ))}
             </div>
           )}
         </div>
@@ -172,9 +190,12 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
       <section className="px-6 pb-16 pt-10 sm:px-12 sm:pb-24 sm:pt-14 lg:px-16" style={{ backgroundColor: c.section }}>
         <div className="mx-auto max-w-[1480px]">
           {partners.length === 0 ? (
-            <p className="text-center text-forest/60">
-              <Multiline text={list.empty} />
-            </p>
+            <EditableText
+              as="p"
+              section="partners.list"
+              field="empty"
+              className="text-center text-forest/60"
+            />
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {partners.map((p) => (

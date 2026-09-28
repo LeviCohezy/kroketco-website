@@ -492,19 +492,20 @@ export default function HomeV3() {
         <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden px-3 py-3">
           {/* title + scattered partner badges — sit behind the growing video and
               fade out as it fills the stage */}
-          <div ref={badgeLayerRef} aria-hidden className="pointer-events-none absolute inset-0 z-0">
+          <div ref={badgeLayerRef} className={`${editing ? "" : "pointer-events-none"} absolute inset-0 z-0`}>
             {/* section title, above the small video */}
             <div
               ref={aboveTitleRef}
               className="absolute left-1/2 top-[3%] w-full max-w-[760px] px-6 text-center will-change-transform"
               style={{ transform: "translate(-50%, 0)" }}
             >
-              <h2
-                className="text-[clamp(1.8rem,4.4vw,3.8rem)] uppercase leading-[0.95] tracking-[0.01em] text-forest"
+              <EditableText
+                as="h2"
+                section="home.partners"
+                field="title"
+                className="block text-[clamp(1.8rem,4.4vw,3.8rem)] uppercase leading-[0.95] tracking-[0.01em] text-forest"
                 style={{ fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }}
-              >
-                {partners.title}
-              </h2>
+              />
             </div>
 
             {/* partner badges */}
@@ -545,16 +546,12 @@ export default function HomeV3() {
             className="relative z-10 h-full w-full origin-center overflow-hidden rounded-[36px] will-change-transform"
             style={{ transform: "scale(0.5)" }}
           >
-            <video
-              className="absolute inset-0 h-full w-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
+            <EditableVideo
+              section="home.partners"
+              field="video"
               poster={partners.poster || undefined}
-            >
-              <source src={partners.video} type="video/mp4" />
-            </video>
+              className="absolute inset-0 h-full w-full object-cover"
+            />
             <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/40" />
 
             {/* partners list reveals once the video has grown */}
@@ -564,12 +561,13 @@ export default function HomeV3() {
               style={{ opacity: 0 }}
             >
               <div className="w-full lg:max-w-[50%]">
-                <h2
-                  className="mb-6 text-[clamp(1.9rem,3.8vw,3.3rem)] uppercase leading-[0.95] tracking-[0.01em] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:mb-8"
+                <EditableText
+                  as="h2"
+                  section="home.partners"
+                  field="listTitle"
+                  className="mb-6 block text-[clamp(1.9rem,3.8vw,3.3rem)] uppercase leading-[0.95] tracking-[0.01em] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:mb-8"
                   style={{ fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }}
-                >
-                  {partners.listTitle}
-                </h2>
+                />
                 {/* paginated list — pages of 4; padded to 4 slots so height (and the
                     button below) stays fixed between pages */}
                 {PARTNERS.length > 0 && (
@@ -593,18 +591,29 @@ export default function HomeV3() {
                       >
                         <a
                           href={partners.listHref || undefined}
+                          onClick={editing ? (e) => e.preventDefault() : undefined}
                           className="group flex min-h-[clamp(58px,7vw,80px)] items-center gap-4 sm:gap-6"
                         >
                           <span className="w-7 shrink-0 text-sm font-semibold tabular-nums text-white/45">
                             {String(partnerPage * PARTNERS_PER_PAGE + i + 1).padStart(2, "0")}
                           </span>
-                          <span className="flex-1 text-[clamp(1.15rem,2.3vw,1.8rem)] font-bold tracking-tight text-white transition-colors group-hover:text-lime">
-                            {p.name}
-                          </span>
-                          {p.desc && (
-                          <span className="hidden whitespace-nowrap rounded-full bg-lime px-3.5 py-1.5 text-xs font-semibold text-forest md:block">
-                            {p.desc}
-                          </span>
+                          <EditableText
+                            as="span"
+                            section="home.partners"
+                            listField="partners"
+                            index={partnerPage * PARTNERS_PER_PAGE + i}
+                            itemKey="name"
+                            className="flex-1 text-[clamp(1.15rem,2.3vw,1.8rem)] font-bold tracking-tight text-white transition-colors group-hover:text-lime"
+                          />
+                          {(p.desc || editing) && (
+                          <EditableText
+                            as="span"
+                            section="home.partners"
+                            listField="partners"
+                            index={partnerPage * PARTNERS_PER_PAGE + i}
+                            itemKey="desc"
+                            className="hidden whitespace-nowrap rounded-full bg-lime px-3.5 py-1.5 text-xs font-semibold text-forest md:block"
+                          />
                           )}
                           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-light-blue text-forest transition-transform group-hover:translate-x-1">
                             <ArrowRight />
@@ -617,12 +626,14 @@ export default function HomeV3() {
                 )}
 
                 {partners.buttonHref && (
-                <a
-                  href={partners.buttonHref}
+                <EditableLink
+                  section="home.partners"
+                  labelField="buttonLabel"
+                  hrefField="buttonHref"
                   className="mt-6 inline-flex items-center gap-2 rounded-lg bg-orange px-7 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03] sm:mt-8"
                 >
-                  {partners.buttonLabel} <ArrowRight />
-                </a>
+                  <ArrowRight />
+                </EditableLink>
                 )}
               </div>
             </div>

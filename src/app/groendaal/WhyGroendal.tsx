@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useContent } from "@/app/_ui/ContentProvider";
-import Multiline from "@/app/_ui/Multiline";
+import { EditableText } from "@/app/_ui/edit/Editable";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -104,11 +104,11 @@ export default function WhyGroendal() {
 
   const heading = (
     <>
-      {content.title}
+      <EditableText as="span" section="groendaal.why" field="title" />
       {content.titleAccent && (
         <>
           {" "}
-          <span className="text-lime">{content.titleAccent}</span>
+          <EditableText as="span" section="groendaal.why" field="titleAccent" className="text-lime" />
         </>
       )}
     </>
@@ -124,9 +124,12 @@ export default function WhyGroendal() {
             ref={headingRef}
             className="pointer-events-none absolute inset-0 z-0 flex flex-col items-center justify-center text-center"
           >
-            <span className="mb-4 text-[13px] font-bold uppercase tracking-[0.1em] text-lime">
-              {content.eyebrow}
-            </span>
+            <EditableText
+              as="span"
+              section="groendaal.why"
+              field="eyebrow"
+              className="mb-4 text-[13px] font-bold uppercase tracking-[0.1em] text-lime"
+            />
             <h2
               className="max-w-4xl text-[clamp(2rem,6vw,5rem)] uppercase leading-[1] tracking-tight text-cream"
               style={OSWALD}
@@ -148,12 +151,23 @@ export default function WhyGroendal() {
                   className={`${c.bg} ${c.text} rounded-[22px] p-4 shadow-[0_34px_70px_-24px_rgba(0,0,0,0.6)] sm:rounded-[26px] sm:p-7`}
                   style={{ transform: `rotate(${c.tilt}deg)` }}
                 >
-                  <h3 className="text-[clamp(0.95rem,2vw,1.9rem)] uppercase leading-[1.05]" style={OSWALD}>
-                    {c.title}
-                  </h3>
-                  <p className="mt-2 text-[clamp(0.7rem,1vw,1rem)] leading-relaxed opacity-90 sm:mt-4">
-                    <Multiline text={c.body} />
-                  </p>
+                  <EditableText
+                    as="h3"
+                    section="groendaal.why"
+                    listField="cards"
+                    index={i}
+                    itemKey="title"
+                    className="text-[clamp(0.95rem,2vw,1.9rem)] uppercase leading-[1.05]"
+                    style={OSWALD}
+                  />
+                  <EditableText
+                    as="p"
+                    section="groendaal.why"
+                    listField="cards"
+                    index={i}
+                    itemKey="body"
+                    className="mt-2 whitespace-pre-line text-[clamp(0.7rem,1vw,1rem)] leading-relaxed opacity-90 sm:mt-4"
+                  />
                 </div>
               </div>
             ))}
@@ -164,9 +178,12 @@ export default function WhyGroendal() {
       {/* MOBILE — sticky stacking cards */}
       <section className="bg-forest px-6 py-16 md:hidden">
         <div className="text-center">
-          <span className="text-[13px] font-bold uppercase tracking-[0.1em] text-lime">
-            {content.eyebrow}
-          </span>
+          <EditableText
+            as="span"
+            section="groendaal.why"
+            field="eyebrow"
+            className="text-[13px] font-bold uppercase tracking-[0.1em] text-lime"
+          />
           <h2
             className="mt-4 text-[clamp(1.8rem,8vw,2.7rem)] uppercase leading-[1.02] tracking-tight text-cream"
             style={OSWALD}
@@ -188,12 +205,23 @@ export default function WhyGroendal() {
                 <span className="text-[12px] font-bold uppercase tracking-[0.12em] opacity-70">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-3 text-[clamp(1.5rem,7vw,2rem)] uppercase leading-[1.05]" style={OSWALD}>
-                  {c.title}
-                </h3>
-                <p className="mt-3 leading-relaxed opacity-90">
-                  <Multiline text={c.body} />
-                </p>
+                <EditableText
+                  as="h3"
+                  section="groendaal.why"
+                  listField="cards"
+                  index={i}
+                  itemKey="title"
+                  className="mt-3 text-[clamp(1.5rem,7vw,2rem)] uppercase leading-[1.05]"
+                  style={OSWALD}
+                />
+                <EditableText
+                  as="p"
+                  section="groendaal.why"
+                  listField="cards"
+                  index={i}
+                  itemKey="body"
+                  className="mt-3 whitespace-pre-line leading-relaxed opacity-90"
+                />
               </div>
             </div>
           ))}

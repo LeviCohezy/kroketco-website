@@ -4,6 +4,7 @@
 import Link from "next/link";
 import NewsletterForm from "./NewsletterForm";
 import { useContent } from "./ContentProvider";
+import { EditableText, EditableImage, EditableLink } from "@/app/_ui/edit/Editable";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -46,13 +47,13 @@ export function PageFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1.1fr_1.4fr]">
           {/* brand + socials */}
           <div>
-            <div className="flex items-center gap-3">
-              <img src={f.logo} alt="Kroketco" className="h-14 w-auto" />
+            <div className="relative flex items-center gap-3">
+              <EditableImage section="global.footer" field="logo" alt="Kroketco" className="h-14 w-auto" />
               <span className="text-[1.7rem] uppercase leading-none tracking-tight text-cream" style={OSWALD}>
                 Kroketco
               </span>
             </div>
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-cream/70">{f.blurb}</p>
+            <EditableText as="p" section="global.footer" field="blurb" className="mt-5 max-w-xs text-sm leading-relaxed text-cream/70" />
             {socials.length > 0 && (
             <div className="mt-6 flex gap-3">
               {socials.map((s) => (
@@ -75,14 +76,12 @@ export function PageFooter() {
 
           {/* nav links */}
           <div>
-            <h3 className="text-[15px] uppercase tracking-[0.12em] text-lime" style={OSWALD}>
-              {f.linksTitle}
-            </h3>
+            <EditableText as="h3" section="global.footer" field="linksTitle" className="text-[15px] uppercase tracking-[0.12em] text-lime" style={OSWALD} />
             <ul className="mt-4 space-y-2.5 text-sm">
               {f.links.map((l, i) => (
                 <li key={i}>
                   <Link href={l.href} className="text-cream/75 transition-colors hover:text-cream">
-                    {l.label}
+                    <EditableText as="span" section="global.footer" listField="links" index={i} itemKey="label" />
                   </Link>
                 </li>
               ))}
@@ -91,23 +90,19 @@ export function PageFooter() {
 
           {/* contact */}
           <div>
-            <h3 className="text-[15px] uppercase tracking-[0.12em] text-lime" style={OSWALD}>
-              {f.contactTitle}
-            </h3>
+            <EditableText as="h3" section="global.footer" field="contactTitle" className="text-[15px] uppercase tracking-[0.12em] text-lime" style={OSWALD} />
             <ul className="mt-4 space-y-2.5 text-sm text-cream/75">
-              {f.address && <li>{f.address}</li>}
+              {f.address && <EditableText as="li" section="global.footer" field="address" />}
               {f.email && (
                 <li>
                   <a href={`mailto:${f.email}`} className="transition-colors hover:text-cream">
-                    {f.email}
+                    <EditableText as="span" section="global.footer" field="email" />
                   </a>
                 </li>
               )}
               {f.contactLabel && (
                 <li>
-                  <Link href={f.contactHref || "/#contact"} className="transition-colors hover:text-cream">
-                    {f.contactLabel}
-                  </Link>
+                  <EditableLink section="global.footer" labelField="contactLabel" hrefField="contactHref" className="transition-colors hover:text-cream" />
                 </li>
               )}
             </ul>
@@ -118,11 +113,11 @@ export function PageFooter() {
         </div>
 
         <div className="mt-14 flex flex-col gap-4 border-t border-cream/15 pt-8 text-sm text-cream/55 sm:flex-row sm:items-center sm:justify-between">
-          <span>{f.copyright}</span>
+          <EditableText as="span" section="global.footer" field="copyright" />
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             {f.legal.map((l, i) => (
               <Link key={i} href={l.href || "#"} className="transition-colors hover:text-cream">
-                {l.label}
+                <EditableText as="span" section="global.footer" listField="legal" index={i} itemKey="label" />
               </Link>
             ))}
           </div>

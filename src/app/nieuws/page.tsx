@@ -4,7 +4,7 @@ import { PageFooter } from "../_ui/SiteChrome";
 import NewsletterForm from "../_ui/NewsletterForm";
 import { listPosts } from "@/lib/repo";
 import { getContent } from "@/lib/content/store";
-import Multiline from "../_ui/Multiline";
+import { EditableText, EditableImage } from "@/app/_ui/edit/Editable";
 
 // Reads published blogposts from the CMS DB. Dynamic so CMS edits appear live.
 export const dynamic = "force-dynamic";
@@ -37,12 +37,8 @@ export default async function NieuwsPage() {
     return (
       <main className="min-h-screen bg-white text-forest [font-family:var(--font-inter),sans-serif]">
         <section className="px-6 pb-16 pt-40 text-center sm:px-12 lg:px-16">
-          <h1 className="text-2xl uppercase tracking-tight" style={OSWALD}>
-            {list.emptyTitle}
-          </h1>
-          <p className="mt-3 text-forest/70">
-            <Multiline text={list.emptyText} />
-          </p>
+          <EditableText as="h1" section="nieuws.list" field="emptyTitle" className="text-2xl uppercase tracking-tight" style={OSWALD} />
+          <EditableText as="p" section="nieuws.list" field="emptyText" className="mt-3 text-forest/70" />
         </section>
         <PageFooter />
       </main>
@@ -55,36 +51,40 @@ export default async function NieuwsPage() {
       <section className="relative overflow-hidden bg-[var(--light-blue)]">
         {/* decorative: chef (mirrored) on the left, hand + fork coming in from the right */}
         {hero.imageLeft && (
-          <img
-            src={hero.imageLeft}
+          <EditableImage
+            section="nieuws.hero"
+            field="imageLeft"
             alt=""
-            aria-hidden
             className="pointer-events-none absolute bottom-0 left-0 hidden w-[clamp(180px,20vw,330px)] drop-shadow-[0_16px_30px_rgba(14,75,58,0.25)] lg:block"
             style={{ transform: "scaleX(-1)" }}
           />
         )}
         {hero.imageRight && (
-          <img
-            src={hero.imageRight}
+          <EditableImage
+            section="nieuws.hero"
+            field="imageRight"
             alt=""
-            aria-hidden
             className="pointer-events-none absolute right-[-2%] top-1/2 hidden w-[clamp(150px,17vw,260px)] -translate-y-1/2 -rotate-[70deg] drop-shadow-[0_16px_30px_rgba(14,75,58,0.25)] lg:block"
           />
         )}
         <div className="relative mx-auto max-w-[1480px] px-6 pb-12 pt-28 text-center sm:px-12 sm:pb-16 sm:pt-36 lg:px-16">
           <span className="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-forest/70">
             <span className="h-2 w-2 rounded-[2px] bg-orange" />
-            {hero.eyebrow}
+            <EditableText as="span" section="nieuws.hero" field="eyebrow" />
           </span>
-          <h1
+          <EditableText
+            as="h1"
+            section="nieuws.hero"
+            field="title"
             className="mx-auto mt-5 max-w-3xl text-[clamp(2.2rem,6vw,5rem)] uppercase leading-[0.95] tracking-[0.01em]"
             style={OSWALD}
-          >
-            {hero.title}
-          </h1>
-          <p className="mx-auto mt-5 max-w-xl text-lg font-medium text-forest/75">
-            <Multiline text={hero.text} />
-          </p>
+          />
+          <EditableText
+            as="p"
+            section="nieuws.hero"
+            field="text"
+            className="mx-auto mt-5 max-w-xl text-lg font-medium text-forest/75"
+          />
         </div>
       </section>
 

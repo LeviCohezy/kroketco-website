@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useContent } from "./ContentProvider";
-import Multiline from "./Multiline";
+import { EditableText } from "@/app/_ui/edit/Editable";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -42,12 +42,10 @@ export default function NewsletterForm({ compact = false }: { compact?: boolean 
   if (compact) {
     return (
       <div>
-        <h3 className="text-[15px] font-bold uppercase tracking-[0.14em] text-lime">{t.eyebrow}</h3>
-        <p className="mt-3 max-w-xs text-sm leading-relaxed text-cream/70">
-          <Multiline text={t.footerText} />
-        </p>
+        <EditableText as="h3" section="global.newsletter" field="eyebrow" className="text-[15px] font-bold uppercase tracking-[0.14em] text-lime" />
+        <EditableText as="p" section="global.newsletter" field="footerText" className="mt-3 max-w-xs text-sm leading-relaxed text-cream/70" />
         {status === "done" ? (
-          <p className="mt-4 text-sm font-semibold text-lime">{t.footerThanks}</p>
+          <EditableText as="p" section="global.newsletter" field="footerThanks" className="mt-4 text-sm font-semibold text-lime" />
         ) : (
           <form onSubmit={submit} className="mt-4 flex flex-col gap-3 sm:flex-row">
             <input
@@ -77,19 +75,13 @@ export default function NewsletterForm({ compact = false }: { compact?: boolean 
       <div className="mx-auto max-w-[720px] text-center">
         <span className="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.14em] text-lime">
           <span className="h-2 w-2 rounded-[2px] bg-lime" />
-          {t.eyebrow}
+          <EditableText as="span" section="global.newsletter" field="eyebrow" />
         </span>
-        <h2 className="mt-4 text-[clamp(1.8rem,4.5vw,3rem)] uppercase leading-[0.98]" style={OSWALD}>
-          {t.title}
-        </h2>
-        <p className="mx-auto mt-4 max-w-md text-cream/80">
-          <Multiline text={t.text} />
-        </p>
+        <EditableText as="h2" section="global.newsletter" field="title" className="mt-4 text-[clamp(1.8rem,4.5vw,3rem)] uppercase leading-[0.98]" style={OSWALD} />
+        <EditableText as="p" section="global.newsletter" field="text" className="mx-auto mt-4 max-w-md text-cream/80" />
 
         {status === "done" ? (
-          <p className="mx-auto mt-8 max-w-md text-lg font-semibold text-lime">
-            {t.thanks}
-          </p>
+          <EditableText as="p" section="global.newsletter" field="thanks" className="mx-auto mt-8 max-w-md text-lg font-semibold text-lime" />
         ) : (
           <form onSubmit={submit} className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
             <input

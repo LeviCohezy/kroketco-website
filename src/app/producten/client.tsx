@@ -7,7 +7,7 @@ import { PageFooter } from "../_ui/SiteChrome";
 import ContactFields from "../_ui/ContactFields";
 import { AllergenIcon, ALLERGEN_MAP } from "@/lib/allergens";
 import { useContent } from "../_ui/ContentProvider";
-import Multiline from "../_ui/Multiline";
+import { EditableText, EditableImage, EditableVideo, EditableLink } from "@/app/_ui/edit/Editable";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -70,11 +70,8 @@ function matches(p: Product, chip: Chip) {
 }
 
 export default function AssortimentView({ products }: { products: Product[] }) {
-  const hero = useContent("producten.hero");
   const { words } = useContent("producten.words");
-  const grid = useContent("producten.grid");
   const horeca = useContent("producten.horeca");
-  const cta = useContent("producten.cta");
   const [active, setActive] = useState<Chip>("Alles");
   const visible = products.filter((p) => matches(p, active));
 
@@ -143,16 +140,11 @@ export default function AssortimentView({ products }: { products: Product[] }) {
           className="absolute inset-0 origin-center will-change-transform"
           style={{ transform: "scale(1)" }}
         >
-          <video
+          <EditableVideo
+            section="producten.hero"
+            field="video"
             className="absolute inset-0 h-full w-full bg-forest object-cover object-top"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-          >
-            <source src={hero.video} type="video/mp4" />
-          </video>
+          />
         </div>
         {/* premium gradient wash for depth + legibility */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70" />
@@ -163,11 +155,15 @@ export default function AssortimentView({ products }: { products: Product[] }) {
             className="whitespace-nowrap text-[clamp(1.15rem,6vw,4.6rem)] uppercase leading-[0.95] tracking-[0.01em] text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
             style={OSWALD}
           >
-            {hero.title} <span className="text-lime">{hero.titleAccent}</span>
+            <EditableText as="span" section="producten.hero" field="title" />{" "}
+            <EditableText as="span" section="producten.hero" field="titleAccent" className="text-lime" />
           </h1>
-          <p className="mt-7 max-w-xl text-base font-medium text-white/85 drop-shadow-[0_1px_10px_rgba(0,0,0,0.6)] sm:text-lg">
-            <Multiline text={hero.text} />
-          </p>
+          <EditableText
+            as="p"
+            section="producten.hero"
+            field="text"
+            className="mt-7 max-w-xl text-base font-medium text-white/85 drop-shadow-[0_1px_10px_rgba(0,0,0,0.6)] sm:text-lg"
+          />
         </div>
 
         {/* scroll cue */}
@@ -187,7 +183,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
               className="flex items-center whitespace-nowrap text-[clamp(1.05rem,2.4vw,1.9rem)] font-bold uppercase tracking-[0.04em]"
               style={OSWALD}
             >
-              {w}
+              <EditableText as="span" section="producten.words" listField="words" index={i} itemKey="word" />
               {i < arr.length - 1 && (
                 <span className="ml-6 flex items-center text-lime sm:ml-8" aria-hidden>
                   <svg viewBox="0 0 24 16" fill="none" className="h-[0.7em] w-auto">
@@ -219,14 +215,14 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                       : "border border-forest/15 bg-white text-forest hover:border-forest/30"
                   }`}
                 >
-                  {grid[labelKey]}
+                  <EditableText as="span" section="producten.grid" field={labelKey} />
                 </button>
               );
             })}
           </div>
 
           <p className="mt-6 text-sm font-semibold uppercase tracking-[0.08em] text-forest/50">
-            {visible.length} {grid.countLabel}
+            {visible.length} <EditableText as="span" section="producten.grid" field="countLabel" />
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -268,9 +264,12 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                     className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.07]"
                   />
                   {p.veggie && (
-                    <span className="absolute left-3 top-3 rounded-full bg-lime px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-forest shadow-sm">
-                      {grid.veggieBadge}
-                    </span>
+                    <EditableText
+                      as="span"
+                      section="producten.grid"
+                      field="veggieBadge"
+                      className="absolute left-3 top-3 rounded-full bg-lime px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-forest shadow-sm"
+                    />
                   )}
                 </div>
 
@@ -284,7 +283,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                     href={`/product/${p.slug}`}
                     className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-forest px-5 py-3.5 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.02]"
                   >
-                    {grid.moreInfo} <ArrowRight />
+                    <EditableText as="span" section="producten.grid" field="moreInfo" /> <ArrowRight />
                   </Link>
                 </div>
               </article>
@@ -298,7 +297,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                 onClick={() => setRows((r) => r + 4)}
                 className="inline-flex items-center gap-2 rounded-lg bg-forest px-8 py-4 text-[13px] font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03]"
               >
-                {grid.showMore} ({visible.length - shown.length})
+                <EditableText as="span" section="producten.grid" field="showMore" /> ({visible.length - shown.length})
               </button>
             </div>
           )}
@@ -312,38 +311,45 @@ export default function AssortimentView({ products }: { products: Product[] }) {
             <div>
               <span className="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-lime">
                 <span className="h-2 w-2 rounded-[2px] bg-lime" />
-                {horeca.eyebrow}
+                <EditableText as="span" section="producten.horeca" field="eyebrow" />
               </span>
-              <h2
+              <EditableText
+                as="h2"
+                section="producten.horeca"
+                field="title"
                 className="mt-5 text-[clamp(2rem,4.4vw,3.4rem)] uppercase leading-[0.98] tracking-[0.01em]"
                 style={OSWALD}
-              >
-                {horeca.title}
-              </h2>
-              <p className="mt-5 max-w-xl text-cream/80">
-                <Multiline text={horeca.text} />
-              </p>
+              />
+              <EditableText
+                as="p"
+                section="producten.horeca"
+                field="text"
+                className="mt-5 max-w-xl text-cream/80"
+              />
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href={horeca.primaryHref || "#"}
+                <EditableLink
+                  section="producten.horeca"
+                  labelField="primaryLabel"
+                  hrefField="primaryHref"
                   className="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.03]"
                 >
-                  {horeca.primaryLabel} <ArrowRight />
-                </Link>
+                  {" "}<ArrowRight />
+                </EditableLink>
                 {horeca.secondaryLabel && (
-                  <Link
-                    href={horeca.secondaryHref || "#"}
+                  <EditableLink
+                    section="producten.horeca"
+                    labelField="secondaryLabel"
+                    hrefField="secondaryHref"
                     className="inline-flex items-center gap-2 rounded-lg border border-cream/25 px-6 py-3 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-colors hover:bg-cream/10"
-                  >
-                    {horeca.secondaryLabel}
-                  </Link>
+                  />
                 )}
               </div>
             </div>
             <div className="relative aspect-[4/3] w-full lg:aspect-auto lg:h-full lg:min-h-[400px]">
               {horeca.image && (
-                <img
-                  src={horeca.image}
+                <EditableImage
+                  section="producten.horeca"
+                  field="image"
                   alt={horeca.imageAlt}
                   className="h-full w-full object-contain"
                 />
@@ -359,17 +365,21 @@ export default function AssortimentView({ products }: { products: Product[] }) {
           <div className="flex flex-col items-center gap-6 rounded-[24px] bg-[var(--light-blue)] px-6 py-14 text-center text-forest shadow-[0_12px_34px_rgba(0,0,0,0.08)] sm:px-8 sm:py-20">
             <span className="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-forest/70">
               <span className="h-2 w-2 rounded-[2px] bg-orange" />
-              {cta.eyebrow}
+              <EditableText as="span" section="producten.cta" field="eyebrow" />
             </span>
-            <h2
+            <EditableText
+              as="h2"
+              section="producten.cta"
+              field="title"
               className="max-w-3xl text-[clamp(2rem,5vw,4rem)] uppercase leading-[0.95] tracking-[0.01em]"
               style={OSWALD}
-            >
-              {cta.title}
-            </h2>
-            <p className="max-w-xl text-lg font-medium text-forest/75">
-              <Multiline text={cta.text} />
-            </p>
+            />
+            <EditableText
+              as="p"
+              section="producten.cta"
+              field="text"
+              className="max-w-xl text-lg font-medium text-forest/75"
+            />
 
             <div className="mt-4 w-full max-w-[620px]">
               <ContactFields source="producten" center />
@@ -403,7 +413,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
               </svg>
             </button>
 
-            <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-orange">{grid.allergenEyebrow}</p>
+            <EditableText as="p" section="producten.grid" field="allergenEyebrow" className="text-[12px] font-semibold uppercase tracking-[0.2em] text-orange" />
             <h3 className="mt-1.5 text-[clamp(1.4rem,3vw,1.9rem)] uppercase leading-[1.02]" style={OSWALD}>
               {allergenInfo.name}
             </h3>
@@ -421,9 +431,12 @@ export default function AssortimentView({ products }: { products: Product[] }) {
               })}
             </ul>
 
-            <p className="mt-6 border-t border-forest/10 pt-4 text-[12px] leading-relaxed text-forest/50">
-              <Multiline text={grid.allergenNote} />
-            </p>
+            <EditableText
+              as="p"
+              section="producten.grid"
+              field="allergenNote"
+              className="mt-6 border-t border-forest/10 pt-4 text-[12px] leading-relaxed text-forest/50"
+            />
           </div>
         </div>
       )}

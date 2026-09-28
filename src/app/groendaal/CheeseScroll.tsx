@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useContent } from "@/app/_ui/ContentProvider";
+import { EditableText, EditableImage } from "@/app/_ui/edit/Editable";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -23,7 +24,7 @@ export default function CheeseScroll() {
   const c = useContent("groendaal.cheeseScroll");
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const kroketRef = useRef<HTMLImageElement>(null);
+  const kroketRef = useRef<HTMLDivElement>(null);
   const word1Ref = useRef<HTMLDivElement>(null);
   const word2Ref = useRef<HTMLDivElement>(null);
 
@@ -120,33 +121,53 @@ export default function CheeseScroll() {
             height={854}
             className="absolute left-1/2 top-1/2 h-full w-auto max-w-[92vw] -translate-x-1/2 -translate-y-1/2"
           />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <div
             ref={kroketRef}
-            src={c.kroketImage}
-            alt={c.kroketAlt}
-            className="absolute left-1/2 top-1/2 h-full w-auto max-w-[92vw] -translate-x-1/2 -translate-y-1/2 object-contain"
+            className="absolute left-1/2 top-1/2 h-full w-auto max-w-[92vw] -translate-x-1/2 -translate-y-1/2"
             style={{ opacity: 0 }}
-          />
+          >
+            <EditableImage
+              section="groendaal.cheeseScroll"
+              field="kroketImage"
+              alt={c.kroketAlt}
+              className="h-full w-auto max-w-[92vw] object-contain"
+            />
+          </div>
         </div>
 
         {/* wordmark — cross-fading text */}
         <div className="relative -mt-[1vh] select-none text-center leading-[0.84]">
           <div ref={word1Ref}>
-            <span className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest" style={OSWALD}>
-              {c.before1}
-            </span>
-            <span className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest" style={OSWALD}>
-              {c.before2}
-            </span>
+            <EditableText
+              as="span"
+              section="groendaal.cheeseScroll"
+              field="before1"
+              className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest"
+              style={OSWALD}
+            />
+            <EditableText
+              as="span"
+              section="groendaal.cheeseScroll"
+              field="before2"
+              className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest"
+              style={OSWALD}
+            />
           </div>
           <div ref={word2Ref} className="absolute inset-0" style={{ opacity: 0 }}>
-            <span className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest" style={OSWALD}>
-              {c.after1}
-            </span>
-            <span className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest" style={OSWALD}>
-              {c.after2}
-            </span>
+            <EditableText
+              as="span"
+              section="groendaal.cheeseScroll"
+              field="after1"
+              className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest"
+              style={OSWALD}
+            />
+            <EditableText
+              as="span"
+              section="groendaal.cheeseScroll"
+              field="after2"
+              className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest"
+              style={OSWALD}
+            />
           </div>
         </div>
       </div>

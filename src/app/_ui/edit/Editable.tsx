@@ -213,12 +213,16 @@ export function EditableLink({
   hrefField,
   className,
   children,
+  target,
+  rel,
 }: {
   section: SectionId;
   labelField: string;
   hrefField: string;
   className?: string;
   children?: ReactNode;
+  target?: string;
+  rel?: string;
 }) {
   const { content, editing, updateField } = useEditor();
   const sec = content[section] as Record<string, string>;
@@ -228,7 +232,7 @@ export function EditableLink({
 
   if (!editing) {
     return (
-      <a href={href} className={className}>
+      <a href={href} className={className} target={target} rel={rel}>
         {label}
         {children}
       </a>

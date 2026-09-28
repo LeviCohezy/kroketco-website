@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useContent } from "./ContentProvider";
+import { EditableText } from "@/app/_ui/edit/Editable";
 
 // The actual contact form fields + submit logic, posting to the public
 // /api/contact endpoint. Kept separate from any surrounding card/heading so it
@@ -59,10 +60,8 @@ export default function ContactFields({
   if (status === "done") {
     return (
       <div className={`rounded-2xl bg-white/70 p-8 ${center ? "text-center" : ""}`}>
-        <p className="text-lg font-bold text-forest" style={OSWALD}>
-          {t.thanksTitle}
-        </p>
-        <p className="mt-2 text-sm text-forest/70">{t.thanksText}</p>
+        <EditableText as="p" section="global.contact" field="thanksTitle" className="text-lg font-bold text-forest" style={OSWALD} />
+        <EditableText as="p" section="global.contact" field="thanksText" className="mt-2 text-sm text-forest/70" />
       </div>
     );
   }
