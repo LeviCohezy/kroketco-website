@@ -8,6 +8,8 @@ import { getProductBySlug, listProducts } from "@/lib/repo";
 import type { PrepMethod } from "@/lib/types";
 import { AllergenIcon, parseAllergens } from "@/lib/allergens";
 import { Bereiding } from "./Bereiding";
+import { getContent } from "@/lib/content/store";
+import Multiline from "../../_ui/Multiline";
 
 // Per-product detail page, driven entirely by CMS data. Dynamic so edits appear
 // immediately; 404 when the product is missing or not published.
@@ -40,10 +42,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const allergens = parseAllergens(p.allergens);
   const present = new Set(allergens.map((a) => a.code));
 
-  const methods: { title: string; method: PrepMethod }[] = [
-    { title: "In de oven", method: p.preparation.oven },
-    { title: "In de frituur", method: p.preparation.frituur },
-  ].filter((m) => m.method.enabled && m.method.steps.length > 0);
+  const methods: PrepMethod[] = [p.preparation.oven, p.preparation.frituur].filter((m) => m.enabled && m.steps.length > 0);
+
+  const [hero, prep, ing, rel, cta, contact] = await Promise.all([
+    getContent("product.hero"),
+    getContent("product.bereiding"),
+    getContent("product.ingredienten"),
+    getContent("product.related"),
+    getContent("product.cta"),
+    getContent("product.contact"),
+  ]);
 
   const related = listProducts({ publishedOnly: true })
     .filter((r) => r.slug !== p.slug)
@@ -54,9 +62,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       {/* ============================ PRODUCT HERO ============================ */}
       <section className="mx-auto max-w-[1480px] px-6 pb-16 pt-28 sm:px-12 sm:pb-24 sm:pt-36 lg:px-16">
         <nav className="mb-8 flex items-center gap-2 text-[13px] font-medium text-forest/50">
-          <Link href="/" className="transition-colors hover:text-forest">Home</Link>
+          <Link href={hero.crumbHomeHref || "/"} className="transition-colors hover:text-forest">{hero.crumbHome}</Link>
           <span>/</span>
-          <Link href="/producten" className="transition-colors hover:text-forest">Assortiment</Link>
+          <Link href={hero.crumbListHref || "/producten"} className="transition-colors hover:text-forest">{hero.crumbList}</Link>
           <span>/</span>
           <span className="text-forest">{p.name}</span>
         </nav>
@@ -66,14 +74,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <div className="relative aspect-square overflow-hidden rounded-[32px] p-5 shadow-[0_24px_60px_rgba(14,75,58,0.18)] sm:p-8" style={{ background: p.frame }}>
             {!!p.veggie && (
               <span className="absolute left-5 top-5 z-10 rounded-full bg-lime px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.1em] text-forest">
-                Vegetarisch
+                {hero.veggieBadge}
               </span>
             )}
             <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-white/40">
               {p.image ? (
                 <img src={p.image} alt={p.title || p.name} className="absolute inset-0 h-full w-full object-cover" />
               ) : (
-                <div className="grid h-full w-full place-items-center text-forest/30">Geen afbeelding</div>
+                <div className="grid h-full w-full place-items-center text-forest/30">{hero.noImage}</div>
               )}
             </div>
           </div>
@@ -102,14 +110,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
-                href="/#contact"
+                href={hero.ctaHref || "#"}
                 className="inline-flex items-center gap-3 rounded-xl bg-orange px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03]"
               >
-                Contacteer voor meer info <ArrowRight />
+                {hero.ctaLabel} <ArrowRight />
               </Link>
               {(p.ingredients.length > 0 || present.size > 0) && (
                 <a href="#allergenen" className="text-sm font-semibold text-forest underline underline-offset-4 transition-opacity hover:opacity-70">
-                  Allergenen &amp; info
+                  {hero.allergenLink}
                 </a>
               )}
             </div>
@@ -144,6 +152,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             frituur={p.preparation.frituur}
             image={p.prepImage || p.image}
             alt={p.title || p.name}
+            labels={prep}
           />
         </section>
       )}
@@ -153,10 +162,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <section id="allergenen" className="mx-auto max-w-[1480px] px-6 pb-16 sm:px-12 sm:pb-24 lg:px-16">
           <div className="max-w-2xl">
             <h2 className="text-[clamp(2.4rem,6vw,4.6rem)] uppercase leading-[0.88] text-forest" style={DISPLAY}>
-              Puur &amp; eerlijk
+              {ing.title}
             </h2>
             <span className="font-hand -mt-1 block -rotate-2 text-[clamp(2rem,4.5vw,3.4rem)] leading-none text-orange">
-              geen geheimen
+              {ing.titleHand}
             </span>
           </div>
 
@@ -172,9 +181,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {/* light-blue "puur & echt" ingredients panel — 25% */}
             {p.ingredients.length > 0 && (
               <div className="flex flex-col rounded-[28px] bg-light-blue p-7 text-forest shadow-[0_18px_44px_-18px_rgba(14,75,58,0.28)]">
-                <span className="font-hand -rotate-2 text-[1.9rem] leading-none text-orange">onze belofte</span>
+                <span className="font-hand -rotate-2 text-[1.9rem] leading-none text-orange">{ing.ingredientsHand}</span>
                 <h3 className="mt-1 text-[clamp(1.5rem,2.2vw,2rem)] uppercase leading-[0.9]" style={DISPLAY}>
-                  Puur &amp; echt
+                  {ing.ingredientsTitle}
                 </h3>
                 <ul className="mt-5 flex-1 space-y-3">
                   {p.ingredients.map((ing) => (
@@ -187,19 +196,19 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   ))}
                 </ul>
                 <a
-                  href="/#contact"
+                  href={ing.ingredientsHref || "#"}
                   className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-forest px-5 py-2.5 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.03]"
                 >
-                  Vraag stalen aan <ArrowRight />
+                  {ing.ingredientsButton} <ArrowRight />
                 </a>
               </div>
             )}
 
             {/* cream allergens panel — 25% — with chef mascot */}
             <div className="relative flex flex-col overflow-hidden rounded-[28px] bg-cream p-7 shadow-[0_18px_44px_-18px_rgba(14,75,58,0.2)]">
-              <span className="font-hand -rotate-2 text-[1.9rem] leading-none text-orange">let op</span>
+              <span className="font-hand -rotate-2 text-[1.9rem] leading-none text-orange">{ing.allergensHand}</span>
               <h3 className="mt-1 text-[clamp(1.5rem,2.2vw,2rem)] uppercase leading-[0.9] text-forest" style={DISPLAY}>
-                Allergenen
+                {ing.allergensTitle}
               </h3>
               {allergens.length > 0 ? (
                 <ul className="mt-5 space-y-3">
@@ -215,19 +224,20 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-lime text-forest">
                     <CheckIcon className="h-3.5 w-3.5" />
                   </span>
-                  Geen van de gekende allergenen
+                  {ing.allergensNone}
                 </p>
               )}
               <p className="relative z-10 mt-4 max-w-[62%] text-[12px] leading-relaxed text-forest/50">
-                Kan sporen bevatten van andere allergenen. Raadpleeg de verpakking.
+                <Multiline text={ing.allergensNote} />
               </p>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/kroketten/chef.png"
-                alt=""
-                aria-hidden
-                className="pointer-events-none absolute bottom-0 right-0 w-2/3 drop-shadow-[0_10px_20px_rgba(14,75,58,0.25)]"
-              />
+              {ing.mascot && (
+                <img
+                  src={ing.mascot}
+                  alt=""
+                  aria-hidden
+                  className="pointer-events-none absolute bottom-0 right-0 w-2/3 drop-shadow-[0_10px_20px_rgba(14,75,58,0.25)]"
+                />
+              )}
             </div>
           </div>
         </section>
@@ -239,14 +249,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <div className="flex items-end justify-between gap-6">
             <div>
               <p className="flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.28em] text-orange">
-                <span className="h-2 w-2 rounded-[2px] bg-orange" /> Ook lekker
+                <span className="h-2 w-2 rounded-[2px] bg-orange" /> {rel.eyebrow}
               </p>
               <h2 className="mt-5 text-[clamp(1.9rem,4vw,3rem)] uppercase leading-[1.02] text-forest" style={DISPLAY}>
-                Ontdek meer
+                {rel.title}
               </h2>
             </div>
-            <Link href="/producten" className="hidden shrink-0 items-center gap-2 text-sm font-semibold text-forest underline underline-offset-4 transition-opacity hover:opacity-70 sm:inline-flex">
-              Heel het assortiment <ArrowRight />
+            <Link href={rel.linkHref || "/producten"} className="hidden shrink-0 items-center gap-2 text-sm font-semibold text-forest underline underline-offset-4 transition-opacity hover:opacity-70 sm:inline-flex">
+              {rel.linkLabel} <ArrowRight />
             </Link>
           </div>
 
@@ -283,25 +293,26 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       <section className="mx-auto max-w-[1480px] px-6 pb-16 sm:px-12 sm:pb-24 lg:px-16">
         <div className="relative overflow-hidden rounded-[32px] bg-forest px-6 py-16 text-center text-cream sm:px-12 sm:py-24">
           <p className="flex items-center justify-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.28em] text-lime">
-            <span className="h-2 w-2 rounded-[2px] bg-lime" /> Elke hap een feest
+            <span className="h-2 w-2 rounded-[2px] bg-lime" /> {cta.eyebrow}
           </p>
           <h2 className="mx-auto mt-6 max-w-3xl text-[clamp(2.2rem,5vw,4rem)] uppercase leading-[0.98]" style={DISPLAY}>
-            Klaar om te proeven?
+            {cta.title}
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg text-cream/80">
-            Vers gedraaid, goudbruin gebakken en zo bij jou thuis. Voor de betere
-            traiteur en de horeca in heel België.
+            <Multiline text={cta.text} />
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/#contact"
+              href={cta.primaryHref || "#"}
               className="inline-flex items-center gap-3 rounded-xl bg-orange px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03]"
             >
-              Contacteer ons <ArrowRight />
+              {cta.primaryLabel} <ArrowRight />
             </Link>
-            <Link href="/producten" className="inline-flex items-center gap-3 rounded-xl border border-cream/25 px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-colors hover:bg-cream/10">
-              Bekijk assortiment
-            </Link>
+            {cta.secondaryLabel && (
+              <Link href={cta.secondaryHref || "#"} className="inline-flex items-center gap-3 rounded-xl border border-cream/25 px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-colors hover:bg-cream/10">
+                {cta.secondaryLabel}
+              </Link>
+            )}
           </div>
         </div>
       </section>
@@ -311,8 +322,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       {p.showForm ? (
         <ContactForm
           source={p.slug}
-          heading="Interesse in dit product?"
-          text="Stalen aanvragen of meer info over prijzen en verpakking? Laat je gegevens achter en we nemen snel contact op."
+          eyebrow={contact.eyebrow}
+          heading={contact.title}
+          text={contact.text}
         />
       ) : null}
 

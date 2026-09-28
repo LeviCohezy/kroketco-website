@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useContent } from "./ContentProvider";
 
 // The actual contact form fields + submit logic, posting to the public
 // /api/contact endpoint. Kept separate from any surrounding card/heading so it
@@ -27,6 +28,7 @@ export default function ContactFields({
   source?: string;
   center?: boolean;
 }) {
+  const t = useContent("global.contact");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -58,9 +60,9 @@ export default function ContactFields({
     return (
       <div className={`rounded-2xl bg-white/70 p-8 ${center ? "text-center" : ""}`}>
         <p className="text-lg font-bold text-forest" style={OSWALD}>
-          Bedankt voor je bericht!
+          {t.thanksTitle}
         </p>
-        <p className="mt-2 text-sm text-forest/70">We nemen zo snel mogelijk contact met je op.</p>
+        <p className="mt-2 text-sm text-forest/70">{t.thanksText}</p>
       </div>
     );
   }
@@ -68,21 +70,21 @@ export default function ContactFields({
   return (
     <form onSubmit={submit} className="grid gap-4 text-left">
       <div className="grid gap-4 sm:grid-cols-2">
-        <input className={field} placeholder="Naam" value={name} onChange={(e) => setName(e.target.value)} required />
+        <input className={field} placeholder={t.name} value={name} onChange={(e) => setName(e.target.value)} required />
         <input
           type="email"
           className={field}
-          placeholder="E-mail"
+          placeholder={t.email}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
       </div>
-      <input className={field} placeholder="Onderwerp" value={subject} onChange={(e) => setSubject(e.target.value)} />
+      <input className={field} placeholder={t.subject} value={subject} onChange={(e) => setSubject(e.target.value)} />
       <textarea
         className={`resize-y ${field}`}
         rows={5}
-        placeholder="Je bericht"
+        placeholder={t.message}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         required
@@ -95,7 +97,7 @@ export default function ContactFields({
           center ? "mx-auto" : ""
         }`}
       >
-        {status === "sending" ? "Bezig…" : (<>Verstuur <ArrowRight /></>)}
+        {status === "sending" ? "Bezig…" : (<>{t.button} <ArrowRight /></>)}
       </button>
     </form>
   );

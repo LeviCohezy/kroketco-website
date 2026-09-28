@@ -1,15 +1,10 @@
+"use client";
 /* eslint-disable @next/next/no-img-element */
 
-const FEATURES = [
-  { icon: "/icons/icon-1.png", label: "Lokale producten" },
-  { icon: "/icons/icon-2.png", label: "Belgische kazen" },
-  { icon: "/icons/icon-3.png", label: "Vers gedraaid" },
-  { icon: "/icons/icon-4.png", label: "Gemaakt voor chefs" },
-  { icon: "/icons/icon-5.png", label: "Met de hand gemaakt" },
-  { icon: "/icons/icon-6.png", label: "Familie recept" },
-];
+import { useContent } from "@/app/_ui/ContentProvider";
 
 export default function BestSellers({ squareBottom = false }: { squareBottom?: boolean }) {
+  const { items: FEATURES } = useContent("home.features");
   return (
     <section className={`relative z-20 -mt-[clamp(8px,2vw,50px)] ${squareBottom ? "" : "rounded-b-[44px]"} bg-white px-6 pb-16 pt-10 text-forest shadow-[0_36px_60px_-30px_rgba(0,0,0,0.35)] sm:px-12 sm:pb-20 lg:px-16`}>
       <div className="mx-auto max-w-[1480px]">

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { PageFooter } from "../_ui/SiteChrome";
 import ContactFields from "../_ui/ContactFields";
 import { AllergenIcon, ALLERGEN_MAP } from "@/lib/allergens";
+import { useContent } from "../_ui/ContentProvider";
+import Multiline from "../_ui/Multiline";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -49,8 +51,17 @@ type Product = {
   veggie?: boolean;
 };
 
-const CHIPS = ["Alles", "Kroketten", "Mini's & borrelhapjes", "Aardappel", "Puree", "Vegetarisch"] as const;
-type Chip = (typeof CHIPS)[number];
+// Filter values must keep matching the product categories in the DB; only the
+// button text (labelKey → producten.grid) is editable.
+const CHIPS = [
+  { value: "Alles", labelKey: "chipAll" },
+  { value: "Kroketten", labelKey: "chipKroketten" },
+  { value: "Mini's & borrelhapjes", labelKey: "chipMinis" },
+  { value: "Aardappel", labelKey: "chipAardappel" },
+  { value: "Puree", labelKey: "chipPuree" },
+  { value: "Vegetarisch", labelKey: "chipVeggie" },
+] as const;
+type Chip = (typeof CHIPS)[number]["value"];
 
 function matches(p: Product, chip: Chip) {
   if (chip === "Alles") return true;
@@ -59,6 +70,11 @@ function matches(p: Product, chip: Chip) {
 }
 
 export default function AssortimentView({ products }: { products: Product[] }) {
+  const hero = useContent("producten.hero");
+  const { words } = useContent("producten.words");
+  const grid = useContent("producten.grid");
+  const horeca = useContent("producten.horeca");
+  const cta = useContent("producten.cta");
   const [active, setActive] = useState<Chip>("Alles");
   const visible = products.filter((p) => matches(p, active));
 
@@ -135,7 +151,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
             playsInline
             preload="auto"
           >
-            <source src="/ugc/mood.mp4" type="video/mp4" />
+            <source src={hero.video} type="video/mp4" />
           </video>
         </div>
         {/* premium gradient wash for depth + legibility */}
@@ -147,11 +163,10 @@ export default function AssortimentView({ products }: { products: Product[] }) {
             className="whitespace-nowrap text-[clamp(1.15rem,6vw,4.6rem)] uppercase leading-[0.95] tracking-[0.01em] text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
             style={OSWALD}
           >
-            Onze kroketten & <span className="text-lime">puree</span>
+            {hero.title} <span className="text-lime">{hero.titleAccent}</span>
           </h1>
           <p className="mt-7 max-w-xl text-base font-medium text-white/85 drop-shadow-[0_1px_10px_rgba(0,0,0,0.6)] sm:text-lg">
-            Vers gedraaid, met de hand gepaneerd en goudbruin gebakken —
-            voor thuis, de betere traiteur en de horeca.
+            <Multiline text={hero.text} />
           </p>
         </div>
 
@@ -166,9 +181,9 @@ export default function AssortimentView({ products }: { products: Product[] }) {
       {/* Word band — static brand words between hero and products */}
       <div className="bg-orange py-4 text-cream sm:py-5">
         <div className="mx-auto flex max-w-[1480px] flex-wrap items-center justify-center gap-x-6 gap-y-2 px-6 sm:gap-x-8">
-          {["Lekker", "Smeuïg", "Ambachtelijk", "Smaakvol", "Knapperig", "Puur Belgisch"].map((w, i, arr) => (
+          {words.map(({ word: w }, i, arr) => (
             <span
-              key={w}
+              key={i}
               className="flex items-center whitespace-nowrap text-[clamp(1.05rem,2.4vw,1.9rem)] font-bold uppercase tracking-[0.04em]"
               style={OSWALD}
             >
@@ -191,7 +206,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
       <section id="assortiment" className="px-6 py-16 sm:px-12 sm:py-24 lg:px-16">
         <div className="mx-auto max-w-[1480px]">
           <div className="flex flex-wrap items-center gap-3">
-            {CHIPS.map((chip) => {
+            {CHIPS.map(({ value: chip, labelKey }) => {
               const on = active === chip;
               return (
                 <button
@@ -204,14 +219,14 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                       : "border border-forest/15 bg-white text-forest hover:border-forest/30"
                   }`}
                 >
-                  {chip}
+                  {grid[labelKey]}
                 </button>
               );
             })}
           </div>
 
           <p className="mt-6 text-sm font-semibold uppercase tracking-[0.08em] text-forest/50">
-            {visible.length} producten
+            {visible.length} {grid.countLabel}
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -254,7 +269,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                   />
                   {p.veggie && (
                     <span className="absolute left-3 top-3 rounded-full bg-lime px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-forest shadow-sm">
-                      Veggie
+                      {grid.veggieBadge}
                     </span>
                   )}
                 </div>
@@ -269,7 +284,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                     href={`/product/${p.slug}`}
                     className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-forest px-5 py-3.5 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.02]"
                   >
-                    Meer info <ArrowRight />
+                    {grid.moreInfo} <ArrowRight />
                   </Link>
                 </div>
               </article>
@@ -283,7 +298,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                 onClick={() => setRows((r) => r + 4)}
                 className="inline-flex items-center gap-2 rounded-lg bg-forest px-8 py-4 text-[13px] font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03]"
               >
-                Toon meer ({visible.length - shown.length})
+                {grid.showMore} ({visible.length - shown.length})
               </button>
             </div>
           )}
@@ -297,40 +312,42 @@ export default function AssortimentView({ products }: { products: Product[] }) {
             <div>
               <span className="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-lime">
                 <span className="h-2 w-2 rounded-[2px] bg-lime" />
-                Voor de horeca
+                {horeca.eyebrow}
               </span>
               <h2
                 className="mt-5 text-[clamp(2rem,4.4vw,3.4rem)] uppercase leading-[0.98] tracking-[0.01em]"
                 style={OSWALD}
               >
-                Groothandel &amp; foodservice
+                {horeca.title}
               </h2>
               <p className="mt-5 max-w-xl text-cream/80">
-                Betrouwbare kwaliteit, constante paneer en scherpe volumeprijzen. Wij leveren
-                dagvers aan restaurants, brasserieën, traiteurs en cateraars in heel België —
-                met maatwerk voor kaart, portie en verpakking.
+                <Multiline text={horeca.text} />
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
-                  href="#"
+                  href={horeca.primaryHref || "#"}
                   className="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.03]"
                 >
-                  Vraag horeca-prijzen <ArrowRight />
+                  {horeca.primaryLabel} <ArrowRight />
                 </Link>
-                <Link
-                  href="/over-ons"
-                  className="inline-flex items-center gap-2 rounded-lg border border-cream/25 px-6 py-3 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-colors hover:bg-cream/10"
-                >
-                  Over ons
-                </Link>
+                {horeca.secondaryLabel && (
+                  <Link
+                    href={horeca.secondaryHref || "#"}
+                    className="inline-flex items-center gap-2 rounded-lg border border-cream/25 px-6 py-3 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-colors hover:bg-cream/10"
+                  >
+                    {horeca.secondaryLabel}
+                  </Link>
+                )}
               </div>
             </div>
             <div className="relative aspect-[4/3] w-full lg:aspect-auto lg:h-full lg:min-h-[400px]">
-              <img
-                src="/about/horeca.png"
-                alt="Assortiment kroketten in horeca-verpakking, klaar voor groothandel en foodservice"
-                className="h-full w-full object-contain"
-              />
+              {horeca.image && (
+                <img
+                  src={horeca.image}
+                  alt={horeca.imageAlt}
+                  className="h-full w-full object-contain"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -342,17 +359,16 @@ export default function AssortimentView({ products }: { products: Product[] }) {
           <div className="flex flex-col items-center gap-6 rounded-[24px] bg-[var(--light-blue)] px-6 py-14 text-center text-forest shadow-[0_12px_34px_rgba(0,0,0,0.08)] sm:px-8 sm:py-20">
             <span className="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-forest/70">
               <span className="h-2 w-2 rounded-[2px] bg-orange" />
-              Zin gekregen?
+              {cta.eyebrow}
             </span>
             <h2
               className="max-w-3xl text-[clamp(2rem,5vw,4rem)] uppercase leading-[0.95] tracking-[0.01em]"
               style={OSWALD}
             >
-              Bestel je favoriete kroketten
+              {cta.title}
             </h2>
             <p className="max-w-xl text-lg font-medium text-forest/75">
-              Voor thuis, de betere traiteur en de horeca. Vers gedraaid, goudbruin gebakken —
-              elke dag opnieuw.
+              <Multiline text={cta.text} />
             </p>
 
             <div className="mt-4 w-full max-w-[620px]">
@@ -387,7 +403,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
               </svg>
             </button>
 
-            <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-orange">Allergenen</p>
+            <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-orange">{grid.allergenEyebrow}</p>
             <h3 className="mt-1.5 text-[clamp(1.4rem,3vw,1.9rem)] uppercase leading-[1.02]" style={OSWALD}>
               {allergenInfo.name}
             </h3>
@@ -406,7 +422,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
             </ul>
 
             <p className="mt-6 border-t border-forest/10 pt-4 text-[12px] leading-relaxed text-forest/50">
-              Kan sporen bevatten van andere allergenen. Raadpleeg steeds de verpakking.
+              <Multiline text={grid.allergenNote} />
             </p>
           </div>
         </div>

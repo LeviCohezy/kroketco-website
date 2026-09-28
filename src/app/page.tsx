@@ -8,6 +8,8 @@ import Marquee from "./Marquee";
 import VideoSection from "./VideoSection";
 import ContactFields from "./_ui/ContactFields";
 import { PageFooter } from "./_ui/SiteChrome";
+import { useContent } from "./_ui/ContentProvider";
+import { EditableText, EditableImage, EditableLink } from "./_ui/edit/Editable";
 
 function ArrowRight() {
   return (
@@ -37,46 +39,38 @@ function Burst({ label }: { label: string }) {
   );
 }
 
-// About paragraph as tokens — `a` marks accent (orange) words.
-const ABOUT: { t: string; a?: boolean }[] = [
-  { t: "Kroketco" }, { t: "maakt" }, { t: "al" }, { t: "meer" }, { t: "dan" },
-  { t: "25" }, { t: "jaar" }, { t: "ambachtelijke", a: true }, { t: "Belgische", a: true },
-  { t: "kroketten." , a: true }, { t: "Vers" }, { t: "gedraaid," }, { t: "met" },
-  { t: "de" }, { t: "hand" }, { t: "gepaneerd" }, { t: "en" }, { t: "goudbruin", a: true },
-  { t: "gebakken", a: true }, { t: "—" }, { t: "voor" }, { t: "thuis," }, { t: "de" },
-  { t: "betere" }, { t: "traiteur" }, { t: "en" }, { t: "de" }, { t: "horeca" },
-  { t: "in" }, { t: "heel", a: true }, { t: "België.", a: true },
-];
-
-const PRODUCTS = [
-  { name: "Kaaskroket", sub: "4 stuks · romig", src: "/kroketten/prod-kaas.jpg" },
-  { name: "Klassieke kroket", sub: "12 stuks · ragout", src: "/kroketten/prod-klassiek.jpg" },
-  { name: "Mini garnaal", sub: "24 stuks · borrel", src: "/kroketten/prod-garnaal.jpg" },
-  { name: "Beertjes", sub: "4 stuks · voor kids", src: "/kroketten/prod-beertjes.jpg" },
-];
-
-const PARTNERS = [
-  { name: "Steen Food Masters", desc: "Food & non-food" },
-  { name: "Huppa", desc: "Oostende & Wortegem-Petegem" },
-  { name: "Rafina", desc: "Lauwe · sinds 1954" },
-  { name: "Duva Fruit", desc: "Groenten & fruit · Gistel" },
-  { name: "Vlaemynck Natuurlijk", desc: "Aardappelproducten · Veurne" },
-  { name: "Biervliet Freez Center", desc: "Diepvries · Diksmuide" },
-  { name: "Fresh by Vero", desc: "Groenten & fruit · Poperinge" },
-];
-
 // Partner logo badges — a coloured outline ring with a lighter tinted interior,
-// each tint chosen to sit with that partner's own logo colours. Scattered around
-// the small video stage (never behind it), popping in one-by-one on scroll.
-const PARTNER_BADGES = [
-  { src: "/partners/logo-steen.3bac4d420028.svg", name: "Steen Food Masters", ring: "#d22026", fill: "#fbe5e4", pad: "20%", top: "16%", left: "9%", rot: -8, scale: 1, delay: 300 },
-  { src: "/partners/logo.svg", name: "Duva Fruit", ring: "#00694f", fill: "#e7f2ec", pad: "16%", top: "45%", left: "6%", rot: 7, scale: 0.95, delay: 120 },
-  { src: "/partners/logo-freezcenter.png", name: "Biervliet Freez Center", ring: "#3e6be6", fill: "#e8eefb", pad: "14%", top: "76%", left: "13%", rot: 5, scale: 0.9, delay: 540 },
-  { src: "/partners/rafina.svg", name: "Rafina", ring: "#075185", fill: "#e6eff6", pad: "13%", top: "17%", left: "89%", rot: 6, scale: 0.88, delay: 0 },
-  { src: "/partners/HUPPA_Logo_Screen_Black_RGB.svg", name: "Huppa", ring: "#0e4b3a", fill: "#e9f2ec", pad: "12%", top: "46%", left: "92%", rot: -5, scale: 1.1, delay: 380 },
-  { src: "/partners/VlaemynckNatuurlijk_logo_header.svg", name: "Vlaemynck Natuurlijk", ring: "#c7e36a", fill: "#0e4b3a", pad: "13%", top: "73%", left: "86%", rot: -9, scale: 1.02, delay: 660 },
-  { src: "/partners/xfreshbyvero-logo.png.pagespeed.ic.tV35_7rs2f.webp", name: "Fresh by Vero", ring: "#4bad43", fill: "#ecf6e9", pad: "13%", top: "88%", left: "49%", rot: -6, scale: 0.98, delay: 210 },
+// each tint chosen to sit with the default partner's own logo colours. Scattered
+// around the small video stage (never behind it), popping in one-by-one on scroll.
+// Styling is per position; the logos themselves come from the CMS (home.partners).
+const BADGE_STYLES = [
+  { ring: "#d22026", fill: "#fbe5e4", pad: "20%", top: "16%", left: "9%", rot: -8, scale: 1, delay: 300 },
+  { ring: "#00694f", fill: "#e7f2ec", pad: "16%", top: "45%", left: "6%", rot: 7, scale: 0.95, delay: 120 },
+  { ring: "#3e6be6", fill: "#e8eefb", pad: "14%", top: "76%", left: "13%", rot: 5, scale: 0.9, delay: 540 },
+  { ring: "#075185", fill: "#e6eff6", pad: "13%", top: "17%", left: "89%", rot: 6, scale: 0.88, delay: 0 },
+  { ring: "#0e4b3a", fill: "#e9f2ec", pad: "12%", top: "46%", left: "92%", rot: -5, scale: 1.1, delay: 380 },
+  { ring: "#c7e36a", fill: "#0e4b3a", pad: "13%", top: "73%", left: "86%", rot: -9, scale: 1.02, delay: 660 },
+  { ring: "#4bad43", fill: "#ecf6e9", pad: "13%", top: "88%", left: "49%", rot: -6, scale: 0.98, delay: 210 },
 ];
+
+// Sticker placement over the big photo, per position (images from home.photo).
+const STICKER_CLASSES = [
+  "absolute left-[13%] top-[13%] w-[clamp(90px,13vw,180px)] -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)]",
+  "absolute left-[84%] top-[15%] w-[clamp(96px,14vw,190px)] -translate-x-1/2 -translate-y-1/2 rotate-[8deg] drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)]",
+  "absolute left-[16%] top-[84%] w-[clamp(88px,12.5vw,170px)] -translate-x-1/2 -translate-y-1/2 rotate-[6deg] drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)] max-sm:portrait:left-[26%] max-sm:portrait:top-[80%]",
+];
+
+const PARTNERS_PER_PAGE = 4;
+
+// Split the intro paragraph into words; accent parts are marked (orange).
+function aboutWords(parts: { text: string; accent: string }[]) {
+  const out: { t: string; a?: boolean }[] = [];
+  for (const p of parts) {
+    for (const t of p.text.split(/\s+/)) if (t) out.push({ t });
+    for (const t of p.accent.split(/\s+/)) if (t) out.push({ t, a: true });
+  }
+  return out;
+}
 
 function ArrowLeft() {
   return (
@@ -93,6 +87,16 @@ function ArrowRightBig() {
   );
 }
 export default function HomeV3() {
+  const hero = useContent("home.hero");
+  const intro = useContent("home.intro");
+  const products = useContent("home.products");
+  const photo = useContent("home.photo");
+  const partners = useContent("home.partners");
+  const contact = useContent("home.contact");
+  const ABOUT = aboutWords(intro.parts);
+  const PRODUCTS = products.items;
+  const PARTNERS = partners.partners;
+  const partnerPages = Math.max(1, Math.ceil(PARTNERS.length / PARTNERS_PER_PAGE));
   const heroRef = useRef<HTMLElement>(null);
   const fgRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLParagraphElement>(null);
@@ -103,7 +107,8 @@ export default function HomeV3() {
   const badgeLayerRef = useRef<HTMLDivElement>(null);
   const aboveTitleRef = useRef<HTMLDivElement>(null);
   const [badgesIn, setBadgesIn] = useState(false);
-  const [partnerPage, setPartnerPage] = useState(0); // 0 → partners 1-4, 1 → 5-7
+  const [partnerPageRaw, setPartnerPage] = useState(0); // page of 4 partners
+  const partnerPage = partnerPageRaw % partnerPages;
   const [productIdx, setProductIdx] = useState(0);
 
   // width of one product card + gap (gap-5 = 20px)
@@ -116,11 +121,12 @@ export default function HomeV3() {
   const goToProduct = (i: number) =>
     rowRef.current?.scrollTo({ left: i * productStep(), behavior: "smooth" });
 
-  // auto-cycle the partners list between its two pages
+  // auto-cycle the partners list through its pages
   useEffect(() => {
-    const id = setInterval(() => setPartnerPage((p) => (p === 0 ? 1 : 0)), 4000);
+    if (partnerPages < 2) return;
+    const id = setInterval(() => setPartnerPage((p) => (p + 1) % partnerPages), 4000);
     return () => clearInterval(id);
-  }, []);
+  }, [partnerPages]);
 
   // product slider: track the active card on scroll + auto-advance on a timer
   useEffect(() => {
@@ -136,7 +142,9 @@ export default function HomeV3() {
     };
     row.addEventListener("scroll", onScroll, { passive: true });
     const id = setInterval(() => {
-      const next = (Math.round(row.scrollLeft / productStep()) + 1) % PRODUCTS.length;
+      const count = row.children.length;
+      if (!count) return;
+      const next = (Math.round(row.scrollLeft / productStep()) + 1) % count;
       row.scrollTo({ left: next * productStep(), behavior: "smooth" });
     }, 3800);
     return () => {
@@ -263,9 +271,9 @@ export default function HomeV3() {
           muted
           loop
           playsInline
-          poster="/hero/v3-hero.png"
+          poster={hero.poster || undefined}
         >
-          <source src="/hero/v3-bg.mp4" type="video/mp4" />
+          <source src={hero.video} type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
@@ -280,41 +288,42 @@ export default function HomeV3() {
                 style={{ fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }}
               >
                 <span className="block">
-                  <span className="hero-anim hero-rise inline-block" style={{ animationDelay: "0.35s" }}>
-                    Elke hap
-                  </span>
+                  <EditableText as="span" section="home.hero" field="titleLine1" className="hero-anim hero-rise inline-block" style={{ animationDelay: "0.35s" }} />
                 </span>
                 <span className="block">
                   <span className="hero-anim hero-rise relative inline-block" style={{ animationDelay: "0.47s" }}>
-                    een feest
+                    <EditableText as="span" section="home.hero" field="titleLine2" />
+                    {hero.burst && (
                     <span
                       className="hero-anim hero-pop absolute -right-24 -top-6 h-20 w-20 rotate-[-14deg] sm:-right-24 sm:h-28 sm:w-28"
                       style={{ animationDelay: "0.95s" }}
                     >
-                      <Burst label="VERS!" />
+                      <Burst label={hero.burst} />
                     </span>
+                    )}
                   </span>
                 </span>
               </h1>
-              <p className="hero-anim hero-rise mt-7 max-w-lg text-lg font-medium leading-snug text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)] sm:text-xl" style={{ animationDelay: "0.66s" }}>
-                Vers gedraaid, goudbruin gebakken. Schuif aan tafel en proef de
-                echte Belgische kroket.
-              </p>
-              <a href="#" className="hero-anim hero-rise mt-9 inline-flex items-center gap-3 rounded-lg bg-orange px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03]" style={{ animationDelay: "0.8s" }}>
-                Bekijk menu <ArrowRight />
-              </a>
+              <EditableText as="p" section="home.hero" field="text" className="hero-anim hero-rise mt-7 max-w-lg text-lg font-medium leading-snug text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)] sm:text-xl" style={{ animationDelay: "0.66s" }} />
+              {hero.buttonHref && (
+              <EditableLink section="home.hero" labelField="buttonLabel" hrefField="buttonHref" className="hero-anim hero-rise mt-9 inline-flex items-center gap-3 rounded-lg bg-orange px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03]">
+                <ArrowRight />
+              </EditableLink>
+              )}
             </div>
           </div>
 
           {/* product card, bottom-right */}
           <aside className="hero-anim hero-slide absolute bottom-12 right-5 hidden w-[240px] rounded-[26px] bg-white p-3.5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] sm:block sm:bottom-16 sm:right-8 sm:w-[264px]" style={{ animationDelay: "0.62s" }}>
             <div className="relative aspect-square w-full overflow-hidden rounded-[18px]">
-              <Image src="/ugc/ugc-8.png" alt="Garnaalkroket" fill sizes="264px" className="object-cover" />
+              {hero.cardImage && <EditableImage section="home.hero" field="cardImage" alt={hero.cardTitle} className="absolute inset-0 h-full w-full object-cover" />}
             </div>
-            <h3 className="mt-3.5 px-1 text-xl font-bold tracking-tight text-forest">Garnaalkroket</h3>
-            <a href="#" className="mt-3 flex items-center justify-between rounded-2xl bg-forest px-5 py-3 text-sm font-semibold text-cream transition-transform hover:scale-[1.02]">
-              Meer info <ArrowRight />
-            </a>
+            <EditableText as="h3" section="home.hero" field="cardTitle" className="mt-3.5 px-1 text-xl font-bold tracking-tight text-forest" />
+            {hero.cardButtonHref && (
+            <EditableLink section="home.hero" labelField="cardButtonLabel" hrefField="cardButtonHref" className="mt-3 flex items-center justify-between rounded-2xl bg-forest px-5 py-3 text-sm font-semibold text-cream transition-transform hover:scale-[1.02]">
+              <ArrowRight />
+            </EditableLink>
+            )}
           </aside>
         </div>
       </section>
@@ -323,7 +332,7 @@ export default function HomeV3() {
       <section className="relative z-10 -mt-8 rounded-t-[44px] bg-white px-6 pb-16 pt-24 shadow-[0_-30px_60px_rgba(0,0,0,0.25)] sm:px-12 sm:pt-32 lg:px-16">
         <div className="mx-auto max-w-[1480px]">
           <p className="reveal mb-10 flex items-center gap-2 text-[13px] font-medium tracking-wide text-forest/50">
-            <span className="text-orange">＋</span> Over Kroketco
+            <span className="text-orange">＋</span> <EditableText as="span" section="home.intro" field="eyebrow" />
           </p>
           <div className="grid items-start gap-10 lg:grid-cols-[1fr_240px] lg:gap-16">
             <p
@@ -338,12 +347,12 @@ export default function HomeV3() {
             </p>
 
             <div className="reveal flex flex-col gap-4 sm:flex-row lg:flex-col" style={{ transitionDelay: "0.1s" }}>
-              <a href="#" className="rounded-xl bg-forest px-6 py-4 text-center text-sm font-semibold text-cream transition-transform hover:scale-[1.02] sm:flex-1 lg:flex-none">
-                Meer over ons
-              </a>
-              <a href="#" className="rounded-xl bg-orange px-6 py-4 text-center text-sm font-semibold text-cream transition-transform hover:scale-[1.02] sm:flex-1 lg:flex-none">
-                Neem contact op
-              </a>
+              {intro.button1Href && (
+              <EditableLink section="home.intro" labelField="button1Label" hrefField="button1Href" className="rounded-xl bg-forest px-6 py-4 text-center text-sm font-semibold text-cream transition-transform hover:scale-[1.02] sm:flex-1 lg:flex-none" />
+              )}
+              {intro.button2Href && (
+              <EditableLink section="home.intro" labelField="button2Label" hrefField="button2Href" className="rounded-xl bg-orange px-6 py-4 text-center text-sm font-semibold text-cream transition-transform hover:scale-[1.02] sm:flex-1 lg:flex-none" />
+              )}
             </div>
           </div>
         </div>
@@ -361,11 +370,9 @@ export default function HomeV3() {
           <div className="flex items-end justify-between gap-6">
             <div className="reveal">
               <p className="mb-5 flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.28em] text-lime">
-                <span className="h-2 w-2 rounded-[2px] bg-lime" /> Ons assortiment
+                <span className="h-2 w-2 rounded-[2px] bg-lime" /> <EditableText as="span" section="home.products" field="eyebrow" />
               </p>
-              <h2 className="max-w-2xl text-[clamp(2rem,4.4vw,3.4rem)] font-semibold leading-[1.06] tracking-tight">
-                Ambachtelijke kroketten voor elk moment.
-              </h2>
+              <EditableText as="h2" section="home.products" field="title" className="max-w-2xl text-[clamp(2rem,4.4vw,3.4rem)] font-semibold leading-[1.06] tracking-tight" />
             </div>
             <div className="hidden shrink-0 items-center gap-3 sm:flex">
               <button onClick={() => scrollRow(-1)} aria-label="Vorige" className="grid h-12 w-12 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:bg-cream/10">
@@ -384,7 +391,7 @@ export default function HomeV3() {
             {/* product cards — title on top, product centered, button under */}
             {PRODUCTS.map((p, i) => (
               <article
-                key={p.name}
+                key={i}
                 className="reveal group flex aspect-[4/5] w-[80vw] shrink-0 snap-start flex-col rounded-[28px] bg-white p-6 text-forest sm:w-[360px]"
                 style={{ transitionDelay: `${i * 90}ms` }}
               >
@@ -395,14 +402,16 @@ export default function HomeV3() {
                   {p.name}
                 </h3>
                 <div className="relative my-5 flex-1 overflow-hidden rounded-[20px] bg-[#f5f4ef]">
-                  <Image src={p.src} alt={p.name} fill sizes="360px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                  {p.image && <Image src={p.image} alt={p.name} fill sizes="360px" className="object-cover transition-transform duration-500 group-hover:scale-105" />}
                 </div>
+                {p.href && (
                 <a
-                  href="#"
+                  href={p.href}
                   className="rounded-lg bg-orange px-6 py-4 text-center text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.02]"
                 >
-                  Bestel nu
+                  {products.buttonLabel}
                 </a>
+                )}
               </article>
             ))}
           </div>
@@ -431,31 +440,21 @@ export default function HomeV3() {
           <picture>
             <source
               media="(max-width: 640px) and (orientation: portrait)"
-              srcSet="/new-image-section/eten-portrait.png"
+              srcSet={photo.imagePortrait || photo.image}
             />
             <img
-              src="/new-image-section/eten-landscape.png"
-              alt="Vrouw geniet van een krokante ambachtelijke Kroketco kroket"
+              src={photo.image}
+              alt={photo.alt}
               className="block h-auto w-full"
             />
           </picture>
 
           {/* sticker labels */}
-          <img
-            src="/new-image-section/label-lekerrr.png"
-            alt="Lekkerrr!"
-            className="absolute left-[13%] top-[13%] w-[clamp(90px,13vw,180px)] -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)]"
-          />
-          <img
-            src="/new-image-section/label-ambachtelijk.png"
-            alt="Ambachtelijk"
-            className="absolute left-[84%] top-[15%] w-[clamp(96px,14vw,190px)] -translate-x-1/2 -translate-y-1/2 rotate-[8deg] drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)]"
-          />
-          <img
-            src="/new-image-section/label-krokant.png"
-            alt="Krokant!"
-            className="absolute left-[16%] top-[84%] w-[clamp(88px,12.5vw,170px)] -translate-x-1/2 -translate-y-1/2 rotate-[6deg] drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)] max-sm:portrait:left-[26%] max-sm:portrait:top-[80%]"
-          />
+          {photo.stickers.map((st, i) =>
+            st.image ? (
+              <img key={i} src={st.image} alt={st.alt} className={STICKER_CLASSES[i % STICKER_CLASSES.length]} />
+            ) : null
+          )}
         </section>
 
         {/* ============ TIMELINE (scroll-driven, overlaps the sticky image) ============ */}
@@ -486,14 +485,16 @@ export default function HomeV3() {
                 className="text-[clamp(1.8rem,4.4vw,3.8rem)] uppercase leading-[0.95] tracking-[0.01em] text-forest"
                 style={{ fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }}
               >
-                Sterk dankzij onze partners
+                {partners.title}
               </h2>
             </div>
 
             {/* partner badges */}
-            {PARTNER_BADGES.map((b) => (
+            {partners.badges.map((badge, i) => {
+              const b = BADGE_STYLES[i % BADGE_STYLES.length];
+              return (
               <div
-                key={b.name}
+                key={i}
                 className="absolute h-[clamp(72px,7.6vw,120px)] w-[clamp(72px,7.6vw,120px)] will-change-transform"
                 style={{
                   top: b.top,
@@ -507,15 +508,18 @@ export default function HomeV3() {
                   className="grid h-full w-full place-items-center rounded-full shadow-[0_10px_26px_rgba(14,75,58,0.18)]"
                   style={{ backgroundColor: b.fill, border: `3px solid ${b.ring}` }}
                 >
+                  {badge.logo && (
                   <img
-                    src={b.src}
-                    alt={b.name}
+                    src={badge.logo}
+                    alt={badge.name}
                     className="h-full w-full object-contain"
                     style={{ padding: b.pad }}
                   />
+                  )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <div
@@ -529,9 +533,9 @@ export default function HomeV3() {
               muted
               loop
               playsInline
-              poster="/ugc/ugc-3.png"
+              poster={partners.poster || undefined}
             >
-              <source src="/video/partners.mp4" type="video/mp4" />
+              <source src={partners.video} type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/40" />
 
@@ -546,13 +550,14 @@ export default function HomeV3() {
                   className="mb-6 text-[clamp(1.9rem,3.8vw,3.3rem)] uppercase leading-[0.95] tracking-[0.01em] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:mb-8"
                   style={{ fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }}
                 >
-                  Versgroothandels in heel Vlaanderen
+                  {partners.listTitle}
                 </h2>
-                {/* paginated list — 4 then 3; padded to 4 slots so height (and the
+                {/* paginated list — pages of 4; padded to 4 slots so height (and the
                     button below) stays fixed between pages */}
+                {PARTNERS.length > 0 && (
                 <ul key={partnerPage} className="border-t border-white/15">
-                  {Array.from({ length: 4 }).map((_, i) => {
-                    const p = PARTNERS[partnerPage * 4 + i];
+                  {Array.from({ length: PARTNERS_PER_PAGE }).map((_, i) => {
+                    const p = PARTNERS[partnerPage * PARTNERS_PER_PAGE + i];
                     if (!p) {
                       return (
                         <li key={`empty-${i}`} aria-hidden className="border-b border-transparent">
@@ -564,23 +569,25 @@ export default function HomeV3() {
                     }
                     return (
                       <li
-                        key={p.name}
+                        key={i}
                         className="partner-row border-b border-white/15"
                         style={{ animationDelay: `${i * 80}ms` }}
                       >
                         <a
-                          href="/partners"
+                          href={partners.listHref || undefined}
                           className="group flex min-h-[clamp(58px,7vw,80px)] items-center gap-4 sm:gap-6"
                         >
                           <span className="w-7 shrink-0 text-sm font-semibold tabular-nums text-white/45">
-                            {String(partnerPage * 4 + i + 1).padStart(2, "0")}
+                            {String(partnerPage * PARTNERS_PER_PAGE + i + 1).padStart(2, "0")}
                           </span>
                           <span className="flex-1 text-[clamp(1.15rem,2.3vw,1.8rem)] font-bold tracking-tight text-white transition-colors group-hover:text-lime">
                             {p.name}
                           </span>
+                          {p.desc && (
                           <span className="hidden whitespace-nowrap rounded-full bg-lime px-3.5 py-1.5 text-xs font-semibold text-forest md:block">
                             {p.desc}
                           </span>
+                          )}
                           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-light-blue text-forest transition-transform group-hover:translate-x-1">
                             <ArrowRight />
                           </span>
@@ -589,13 +596,16 @@ export default function HomeV3() {
                     );
                   })}
                 </ul>
+                )}
 
+                {partners.buttonHref && (
                 <a
-                  href="/partners"
+                  href={partners.buttonHref}
                   className="mt-6 inline-flex items-center gap-2 rounded-lg bg-orange px-7 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03] sm:mt-8"
                 >
-                  Ontdek onze partners <ArrowRight />
+                  {partners.buttonLabel} <ArrowRight />
                 </a>
+                )}
               </div>
             </div>
           </div>
@@ -609,12 +619,13 @@ export default function HomeV3() {
       {/* ============ CONTACT FORM ============ */}
       <section id="contact" className="relative z-10 bg-[var(--light-blue)] px-6 py-20 text-forest sm:px-12 sm:py-28 lg:px-16">
         <div className="mx-auto max-w-[720px]">
-          <h2
-            className="reveal text-center text-[clamp(2.6rem,8vw,6rem)] uppercase leading-[0.95] tracking-[0.01em]"
+          <EditableText
+            as="h2"
+            section="home.contact"
+            field="title"
+            className="reveal block text-center text-[clamp(2.6rem,8vw,6rem)] uppercase leading-[0.95] tracking-[0.01em]"
             style={{ fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }}
-          >
-            Contacteer ons
-          </h2>
+          />
 
           <div className="reveal mt-12" style={{ transitionDelay: "0.12s" }}>
             <ContactFields source="home" />

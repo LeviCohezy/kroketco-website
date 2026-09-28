@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useContent } from "@/app/_ui/ContentProvider";
+import Multiline from "@/app/_ui/Multiline";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -16,41 +18,13 @@ const STAR_10 = (() => {
   return `polygon(${pts.join(",")})`;
 })();
 
-type Entry = { year: string; tag: string; text: string };
-
-const ENTRIES: Entry[] = [
-  {
-    year: "1998",
-    tag: "Het begin",
-    text: "Kroketco start als klein familiebedrijf: vers gedraaide kroketten, met de hand gepaneerd.",
-  },
-  {
-    year: "2005",
-    tag: "Eigen keuken",
-    text: "We openen onze eigen ambachtelijke keuken, zodat elke kroket met dezelfde zorg gemaakt blijft.",
-  },
-  {
-    year: "2014",
-    tag: "Nieuwe smaken",
-    text: "Van kaas tot garnaal: het assortiment groeit met zorgvuldig gekozen, streekgebonden recepten.",
-  },
-  {
-    year: "2020",
-    tag: "Heel België",
-    text: "Kroketco vindt zijn weg naar de betere traiteur en de horeca in heel het land.",
-  },
-  {
-    year: "2026",
-    tag: "Vandaag",
-    text: "Nog altijd ambachtelijk, nog altijd goudbruin gebakken — elke hap een feest.",
-  },
-];
-
 const VISIBLE = 50;  // hide items past this angle from the front
 
 export default function HistoryTimeline() {
+  const c = useContent("home.history");
+  const ENTRIES = c.entries;
   const n = ENTRIES.length;
-  const MAX = n - 1; // last date
+  const MAX = Math.max(n - 1, 0); // last date
 
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -102,6 +76,8 @@ export default function HistoryTimeline() {
     };
   }, [MAX]);
 
+  if (!n) return null;
+
   return (
     <section
       ref={sectionRef}
@@ -112,25 +88,27 @@ export default function HistoryTimeline() {
         <div className="mx-auto flex w-full max-w-[1480px] items-center justify-between gap-8 px-6 sm:px-12 lg:px-16">
           <div>
             <p className="mb-5 flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.28em] text-lime">
-              <span className="h-2 w-2 rounded-[2px] bg-lime" /> Ons verhaal
+              <span className="h-2 w-2 rounded-[2px] bg-lime" /> {c.eyebrow}
             </p>
             <h2
               className="max-w-3xl text-[clamp(2.2rem,6vw,4.6rem)] uppercase leading-[0.95] tracking-[0.01em] text-lime"
               style={OSWALD}
             >
-              Kroketco door de jaren
+              {c.title}
             </h2>
           </div>
 
           {/* 10-point star mask holding an image, next to the title */}
+          {c.image && (
           <div className="hidden shrink-0 sm:block" style={{ transform: "rotate(-8deg)" }} aria-hidden>
             <img
-              src="/ugc/ugc-3.png"
+              src={c.image}
               alt=""
               className="h-[clamp(110px,13vw,180px)] w-[clamp(110px,13vw,180px)] object-cover"
               style={{ clipPath: STAR_10 }}
             />
           </div>
+          )}
         </div>
 
         <div
@@ -186,21 +164,23 @@ export default function HistoryTimeline() {
                   {"•  "}{it.tag}{"  •"}
                 </span>
                 <p className="mt-4 max-w-[30ch] text-[15px] font-medium leading-relaxed text-cream/90 sm:mt-5 sm:text-[16px]">
-                  {it.text}
+                  <Multiline text={it.text} />
                 </p>
               </article>
             );
           })}
         </div>
 
+        {c.buttonHref && (
         <div className="mt-6 flex justify-center lg:mt-10">
           <a
-            href="/over-ons"
+            href={c.buttonHref}
             className="inline-flex items-center gap-2 rounded-lg bg-lime px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-forest transition-transform hover:scale-[1.03]"
           >
-            Over ons
+            {c.buttonLabel}
           </a>
         </div>
+        )}
       </div>
     </section>
   );

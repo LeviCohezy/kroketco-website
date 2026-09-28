@@ -5,6 +5,7 @@ import { PageFooter } from "../../_ui/SiteChrome";
 import { getPartnerBySlug } from "@/lib/repo";
 import { renderPostBody } from "../../admin/_editor/render";
 import { PostContactForm } from "../../nieuws/[slug]/PostContactForm";
+import { getContent } from "@/lib/content/store";
 
 // Per-partner detail page, driven by the CMS. Dynamic so edits appear live;
 // 404 when the partner is missing or not published.
@@ -19,6 +20,8 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
 
   // Rich body → sanitized HTML with the same extensions as the editor.
   const bodyHtml = renderPostBody(p.body);
+  const copy = await getContent("partners.detail");
+  const formCopy = p.showForm ? await getContent("partners.postForm") : null;
 
   return (
     <main className="min-h-screen bg-white text-forest [font-family:var(--font-inter),sans-serif]">
@@ -69,7 +72,7 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
         <div className="mx-auto max-w-[820px]">
           <span className="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-forest/70">
             <span className="h-2 w-2 rounded-[2px] bg-orange" />
-            Wie zijn ze?
+            {copy.eyebrow}
           </span>
 
           {p.description && (
@@ -81,14 +84,14 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
           <div className="mt-6 tt-prose" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
 
           <Link
-            href="/partners"
+            href={copy.backHref || "/partners"}
             className="mt-10 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.06em] text-forest underline underline-offset-4 transition-opacity hover:opacity-70"
           >
-            ← Terug naar partners
+            {copy.backLabel}
           </Link>
 
           {/* Contact form at the end — shown by default; the CMS can turn it off. */}
-          {p.showForm ? <PostContactForm slug={p.slug} /> : null}
+          {formCopy ? <PostContactForm slug={p.slug} copy={formCopy} /> : null}
         </div>
       </section>
 

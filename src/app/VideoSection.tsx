@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useContent } from "@/app/_ui/ContentProvider";
 
 export default function VideoSection() {
+  const { video } = useContent("home.video");
   const wrapRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -65,13 +67,16 @@ export default function VideoSection() {
       cancelAnimationFrame(raf);
       v.removeEventListener("loadedmetadata", onMeta);
     };
-  }, []);
+  }, [video]);
+
+  if (!video) return null;
 
   return (
     <section className="relative z-10 bg-white">
       {/* fixed-ratio frame crops the empty top/bottom of the 16:9 video */}
       <div ref={wrapRef} className="relative w-full overflow-hidden" style={{ aspectRatio: "2.6 / 1" }}>
         <video
+          key={video}
           ref={ref}
           className="absolute inset-0 h-full w-full object-cover"
           muted
@@ -80,7 +85,7 @@ export default function VideoSection() {
           // lift the light backdrop up to plain white so it matches the other sections
           style={{ filter: "brightness(1.06) contrast(1.12)" }}
         >
-          <source src="/video/intro.mp4" type="video/mp4" />
+          <source src={video} type="video/mp4" />
         </video>
       </div>
     </section>

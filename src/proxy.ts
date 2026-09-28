@@ -30,7 +30,8 @@ export function proxy(request: NextRequest) {
   const isProtectedApi =
     pathname.startsWith("/api/products") ||
     pathname.startsWith("/api/blog") ||
-    pathname.startsWith("/api/partners");
+    pathname.startsWith("/api/partners") ||
+    pathname.startsWith("/api/content");
   if (isProtectedApi && isMutation && !authed) {
     return NextResponse.json({ error: "Niet geautoriseerd" }, { status: 401 });
   }
@@ -39,5 +40,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/products/:path*", "/api/blog/:path*", "/api/partners/:path*"],
+  matcher: ["/admin/:path*", "/api/products/:path*", "/api/blog/:path*", "/api/partners/:path*", "/api/content/:path*"],
 };

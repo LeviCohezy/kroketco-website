@@ -1,5 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import type { PrepMethod } from "@/lib/types";
+import { resolveSection, type ContentOf } from "@/lib/content/registry";
+import { productenSections } from "@/lib/content/sections/producten";
+import Multiline from "../../_ui/Multiline";
 
 // "Zo bak je ze perfect" — the preparation section. Two columns (oven / frituur)
 // split by a dashed divider, lime header pills with line icons, hand-drawn
@@ -133,14 +136,19 @@ function SparkleBurst({ className = "h-7 w-7" }: { className?: string }) {
 }
 
 /* --------------------------------- columns -------------------------------- */
+// Texts come from the editable "product.bereiding" section; callers without it
+// (e.g. the admin preview) fall back to the declared defaults.
+export type BereidingLabels = ContentOf<"product.bereiding">;
+const DEFAULT_LABELS = resolveSection(productenSections["product.bereiding"], null) as BereidingLabels;
+
 const CONFIG = {
-  oven: { title: "In de oven", note: "Makkelijk en lekker!", Glyph: OvenGlyph, icons: [OvenIcon, TrayIcon, ClockIcon] },
-  frituur: { title: "In de frituur", note: "Extra krokant!", Glyph: BasketGlyph, icons: [ThermoIcon, BasketIcon, DripIcon] },
+  oven: { titleKey: "ovenTitle", noteKey: "ovenNote", Glyph: OvenGlyph, icons: [OvenIcon, TrayIcon, ClockIcon] },
+  frituur: { titleKey: "frituurTitle", noteKey: "frituurNote", Glyph: BasketGlyph, icons: [ThermoIcon, BasketIcon, DripIcon] },
 } as const;
 
 type Kind = keyof typeof CONFIG;
 
-function Column({ kind, method }: { kind: Kind; method: PrepMethod }) {
+function Column({ kind, method, labels }: { kind: Kind; method: PrepMethod; labels: BereidingLabels }) {
   const cfg = CONFIG[kind];
   const Glyph = cfg.Glyph;
   const meta = [method.temp, method.time].filter(Boolean).join(" · ");
@@ -150,12 +158,12 @@ function Column({ kind, method }: { kind: Kind; method: PrepMethod }) {
         <span className="inline-flex items-center gap-2.5 rounded-full bg-lime px-4 py-2 text-forest">
           <Glyph />
           <span className="text-[15px] font-bold uppercase tracking-[0.04em]" style={DISPLAY}>
-            {cfg.title}
+            {labels[cfg.titleKey]}
           </span>
         </span>
         <span className="flex items-center gap-1.5 text-lime">
           <ArrowDoodle className="h-6 w-10" />
-          <span className="font-hand text-[1.35rem] leading-none">{cfg.note}</span>
+          <span className="font-hand text-[1.35rem] leading-none">{labels[cfg.noteKey]}</span>
         </span>
       </div>
 
@@ -190,11 +198,13 @@ export function Bereiding({
   frituur,
   image,
   alt = "",
+  labels = DEFAULT_LABELS,
 }: {
   oven: PrepMethod;
   frituur: PrepMethod;
   image?: string;
   alt?: string;
+  labels?: BereidingLabels;
 }) {
   const cols = (
     [
@@ -227,11 +237,13 @@ export function Bereiding({
           style={DISPLAY}
         >
           <span>
-            Zo bak je ze <span className="text-orange">perfect</span>
+            {labels.title} <span className="text-orange">{labels.titleAccent}</span>
           </span>
           <SparkleBurst className="h-6 w-6 shrink-0 text-orange" />
         </h2>
-        <p className="mt-4 max-w-md text-cream/80">Krokant van buiten, smeuïg van binnen. Zo doe je dat:</p>
+        <p className="mt-4 max-w-md text-cream/80">
+          <Multiline text={labels.text} />
+        </p>
       </div>
 
       {/* columns */}
@@ -247,7 +259,7 @@ export function Bereiding({
                 : ""
             }
           >
-            <Column kind={c.kind} method={c.method} />
+            <Column kind={c.kind} method={c.method} labels={labels} />
           </div>
         ))}
       </div>

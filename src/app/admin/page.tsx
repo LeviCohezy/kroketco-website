@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-// The dashboard nav starts at "Blog posts"; /admin redirects there.
+// The dashboard nav starts at "Website teksten"; /admin redirects there.
 export default function AdminHome() {
-  redirect("/admin/blog");
+  redirect("/admin/inhoud");
 }

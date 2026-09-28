@@ -17,13 +17,18 @@ function uploadDir(): string {
   return dir;
 }
 
-const ALLOWED = new Set(["image/png", "image/jpeg", "image/webp", "image/gif", "image/avif"]);
+const IMAGES = ["image/png", "image/jpeg", "image/webp", "image/gif", "image/avif", "image/svg+xml"];
+const VIDEOS = ["video/mp4", "video/webm"];
+const ALLOWED = new Set([...IMAGES, ...VIDEOS]);
 const EXT: Record<string, string> = {
   "image/png": ".png",
   "image/jpeg": ".jpg",
   "image/webp": ".webp",
   "image/gif": ".gif",
   "image/avif": ".avif",
+  "image/svg+xml": ".svg",
+  "video/mp4": ".mp4",
+  "video/webm": ".webm",
 };
 
 export async function POST(request: Request) {
@@ -37,10 +42,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Geen bestand" }, { status: 400 });
   }
   if (!ALLOWED.has(file.type)) {
-    return NextResponse.json({ error: "Alleen afbeeldingen (png/jpg/webp/gif/avif)" }, { status: 400 });
+    return NextResponse.json({ error: "Alleen afbeeldingen (png/jpg/webp/gif/avif/svg) of video (mp4/webm)" }, { status: 400 });
   }
-  if (file.size > 8 * 1024 * 1024) {
-    return NextResponse.json({ error: "Bestand te groot (max 8MB)" }, { status: 400 });
+  const isVideo = VIDEOS.includes(file.type);
+  const maxMb = isVideo ? 60 : 12;
+  if (file.size > maxMb * 1024 * 1024) {
+    return NextResponse.json({ error: `Bestand te groot (max ${maxMb}MB)` }, { status: 400 });
   }
 
   const buf = Buffer.from(await file.arrayBuffer());

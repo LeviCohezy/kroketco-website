@@ -3,24 +3,19 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useContent } from "./ContentProvider";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
-
-const LINKS = [
-  { href: "/producten", label: "Producten" },
-  { href: "/partners", label: "Partners" },
-  { href: "/groendaal", label: "Groendal" },
-  { href: "/over-ons", label: "Over ons" },
-  { href: "/nieuws", label: "Nieuws" },
-];
-const HALF = Math.ceil(LINKS.length / 2);
-const LEFT_LINKS = LINKS.slice(0, HALF);
-const RIGHT_LINKS = LINKS.slice(HALF);
 
 // The homepage hero's floating nav, extracted so it can sit fixed at the top of
 // every page (sticky across the whole scroll) instead of only inside the hero.
 export default function Nav() {
   const pathname = usePathname();
+  const nav = useContent("global.nav");
+  const LINKS = nav.links;
+  const half = Math.ceil(LINKS.length / 2);
+  const LEFT_LINKS = LINKS.slice(0, half);
+  const RIGHT_LINKS = LINKS.slice(half);
   const white = pathname === "/over-ons"; // white navbar on the About page
 
   // The CMS back office (/admin) has its own chrome — never show the public nav.
@@ -45,21 +40,24 @@ export default function Nav() {
           <div className="flex items-center gap-6">
             <div className="hidden items-center gap-6 text-[13px] font-bold uppercase tracking-[0.08em] lg:flex">
               {LEFT_LINKS.map((l) => (
-                <a key={l.href} href={l.href} className="transition-opacity hover:opacity-70">
+                <a key={`${l.href}-${l.label}`} href={l.href} className="transition-opacity hover:opacity-70">
                   {l.label}
                 </a>
               ))}
             </div>
           </div>
-          {/* centered logo */}
-          <a href="/" className="absolute left-1/2 -translate-x-1/2">
-            <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={1254} height={1254} priority className="h-11 w-auto sm:h-14" />
+          {/* centered logo + wordmark */}
+          <a href="/" className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2.5">
+            <Image src={nav.logo} alt="Kroketco" width={1254} height={1254} priority className="h-11 w-auto sm:h-14" />
+            <span className="text-[1.35rem] uppercase leading-none tracking-tight text-forest sm:text-[1.6rem]" style={OSWALD}>
+              Kroketco
+            </span>
           </a>
           {/* right — desktop links / mobile hamburger */}
           <div className="flex items-center gap-6">
             <div className="hidden items-center gap-6 text-[13px] font-bold uppercase tracking-[0.08em] lg:flex">
               {RIGHT_LINKS.map((l) => (
-                <a key={l.href} href={l.href} className="transition-opacity hover:opacity-70">
+                <a key={`${l.href}-${l.label}`} href={l.href} className="transition-opacity hover:opacity-70">
                   {l.label}
                 </a>
               ))}
@@ -84,14 +82,17 @@ export default function Nav() {
         }`}
       >
         <div className="flex items-center justify-between px-6 py-6 sm:px-12">
-          <a href="/" onClick={() => setMenuOpen(false)}>
+          <a href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5">
             <Image
-              src="/hero/logo-kroketco.png"
+              src={nav.logo}
               alt="Kroketco"
               width={1254}
               height={1254}
               className="h-11 w-auto sm:h-12"
             />
+            <span className="text-[1.4rem] uppercase leading-none tracking-tight text-cream" style={OSWALD}>
+              Kroketco
+            </span>
           </a>
           <button
             onClick={() => setMenuOpen(false)}
@@ -107,7 +108,7 @@ export default function Nav() {
         <nav className="flex flex-1 flex-col items-start justify-center gap-6 px-8 text-left sm:px-14">
           {LINKS.map((l) => (
             <a
-              key={l.href}
+              key={`${l.href}-${l.label}`}
               href={l.href}
               onClick={() => setMenuOpen(false)}
               className="text-[clamp(2rem,9vw,3.4rem)] uppercase leading-none tracking-[0.01em] text-cream transition-colors hover:text-lime"
@@ -120,11 +121,11 @@ export default function Nav() {
 
         <div className="px-8 pb-10 text-left sm:px-14">
           <a
-            href="/#contact"
+            href={nav.ctaHref || "/#contact"}
             onClick={() => setMenuOpen(false)}
             className="inline-flex items-center gap-2 rounded-lg bg-orange px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03]"
           >
-            Contacteer ons
+            {nav.ctaLabel}
           </a>
         </div>
       </div>

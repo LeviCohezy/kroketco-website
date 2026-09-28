@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useContent } from "@/app/_ui/ContentProvider";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
+// The spinning-wheel frame sequence is tied to the scroll animation (exact
+// frame count), so it stays in code; the texts and kroket photo are editable.
 const N = 120; // number of extracted frames
 const frameSrc = (i: number) => `/new-images/cheese-frames/f-${String(i + 1).padStart(3, "0")}.webp`;
 
@@ -17,6 +20,7 @@ const smooth = (e0: number, e1: number, x: number) => {
 // wheel cross-fades out and the bear-shaped kaaskroket fades in, while the
 // wordmark swaps from "Roeselaars Streekproduct" to "Roeselaarse kaaskroket".
 export default function CheeseScroll() {
+  const c = useContent("groendaal.cheeseScroll");
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const kroketRef = useRef<HTMLImageElement>(null);
@@ -119,8 +123,8 @@ export default function CheeseScroll() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             ref={kroketRef}
-            src="/new-images/kroket-beertje.png"
-            alt="Roeselaarse kaaskroket in de vorm van een beertje"
+            src={c.kroketImage}
+            alt={c.kroketAlt}
             className="absolute left-1/2 top-1/2 h-full w-auto max-w-[92vw] -translate-x-1/2 -translate-y-1/2 object-contain"
             style={{ opacity: 0 }}
           />
@@ -130,18 +134,18 @@ export default function CheeseScroll() {
         <div className="relative -mt-[1vh] select-none text-center leading-[0.84]">
           <div ref={word1Ref}>
             <span className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest" style={OSWALD}>
-              Roeselaars
+              {c.before1}
             </span>
             <span className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest" style={OSWALD}>
-              Streekproduct
+              {c.before2}
             </span>
           </div>
           <div ref={word2Ref} className="absolute inset-0" style={{ opacity: 0 }}>
             <span className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest" style={OSWALD}>
-              Roeselaarse
+              {c.after1}
             </span>
             <span className="block text-[clamp(2rem,10vw,8rem)] uppercase tracking-[-0.01em] text-forest" style={OSWALD}>
-              Kaaskroket
+              {c.after2}
             </span>
           </div>
         </div>

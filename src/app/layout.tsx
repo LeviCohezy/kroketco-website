@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Baloo_2, Caveat, Inter, Oswald } from "next/font/google";
 import "./globals.css";
 import Nav from "./_ui/Nav";
+import { ContentProvider } from "./_ui/ContentProvider";
+import EditToolbar from "./_ui/edit/EditToolbar";
+import { getAllContent, getContent } from "@/lib/content/store";
+import { isAuthenticated } from "@/lib/auth";
 
 // Rounded, chunky display face for the Kroketco brand voice.
 const baloo = Baloo_2({
@@ -28,11 +32,11 @@ const caveat = Caveat({
   variable: "--font-hand",
 });
 
-export const metadata: Metadata = {
-  title: "Kroketco — Elke hap een feest",
-  description:
-    "Ambachtelijke Belgische kroketten. Vers gedraaid, goudbruin gebakken. Schuif aan en proef het verschil.",
-};
+// Title + description are editable in /admin (Algemeen → Zoekmachines & tabblad).
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getContent("global.seo");
+  return { title: seo.title, description: seo.description };
+}
 
 // On a project GitHub Pages deploy the app lives under /kroketco-website. Next
 // prefixes its own URLs, but raw <img>/<video>/<a> rendered by client React use
@@ -50,7 +54,9 @@ try{pp(HTMLVideoElement.prototype,'poster');}catch(e){}
 var o=Element.prototype.setAttribute;Element.prototype.setAttribute=function(a,v){if(typeof v==='string'){var l=(''+a).toLowerCase();if(l==='src'||l==='poster'||l==='href')v=u(v);else if(l==='srcset')v=ss(v);}return o.call(this,a,v);};
 })();`;
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const content = await getAllContent();
+  const isAdmin = await isAuthenticated();
   return (
     <html
       lang="en"
@@ -65,8 +71,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               "try{if(localStorage.getItem('theme')==='beige')document.documentElement.setAttribute('data-theme','beige')}catch(e){}",
           }}
         />
-        <Nav />
-        {children}
+        <ContentProvider value={content} isAdmin={isAdmin}>
+          <Nav />
+          {children}
+          <EditToolbar />
+        </ContentProvider>
       </body>
     </html>
   );

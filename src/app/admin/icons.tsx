@@ -60,3 +60,14 @@ export function LogoutIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function PagesIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3.5" y="4" width="17" height="16" rx="2" />
+      <path d="M3.5 8.5h17" />
+      <path d="M7 12.5h5M7 16h8" />
+      <path d="M15.5 12.5h2" />
+    </svg>
+  );
+}

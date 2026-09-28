@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import type { ContentOf } from "@/lib/content/registry";
+import Multiline from "../../_ui/Multiline";
+
+// Editable copy (Nieuws → "Nieuwsbericht — contactformulier" or Partners →
+// "Partnerpagina — contactformulier"); both sections share the same fields.
+type FormCopy = ContentOf<"nieuws.postForm"> | ContentOf<"partners.postForm">;
 
 // Contact form rendered at the end of a blog post when the post has
 // "Formulier tonen" enabled. Posts to the public /api/contact endpoint.
-export function PostContactForm({ slug }: { slug: string }) {
+export function PostContactForm({ slug, copy }: { slug: string; copy: FormCopy }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -22,10 +28,10 @@ export function PostContactForm({ slug }: { slug: string }) {
         body: JSON.stringify({ name, email, message, postSlug: slug }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || "Versturen mislukt");
+      if (!res.ok) throw new Error(data.error || copy.error);
       setStatus("done");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Versturen mislukt");
+      setError(err instanceof Error ? err.message : copy.error);
       setStatus("error");
     }
   }
@@ -37,9 +43,9 @@ export function PostContactForm({ slug }: { slug: string }) {
     return (
       <div className="mt-14 rounded-[24px] bg-light-blue p-8 text-center sm:p-10">
         <p className="text-lg font-bold text-forest" style={{ fontFamily: "var(--font-oswald), sans-serif" }}>
-          Bedankt voor je bericht!
+          {copy.thanksTitle}
         </p>
-        <p className="mt-2 text-sm text-forest/70">We nemen zo snel mogelijk contact met je op.</p>
+        <p className="mt-2 text-sm text-forest/70">{copy.thanksText}</p>
       </div>
     );
   }
@@ -50,24 +56,24 @@ export function PostContactForm({ slug }: { slug: string }) {
         className="text-[clamp(1.5rem,3vw,2.2rem)] uppercase leading-[1.02] text-forest"
         style={{ fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }}
       >
-        Stuur ons een bericht
+        {copy.title}
       </h2>
       <p className="mt-2 max-w-lg text-sm text-forest/70">
-        Vragen of interesse? Laat je gegevens achter en we reageren snel.
+        <Multiline text={copy.text} />
       </p>
       <form onSubmit={submit} className="mt-6 grid gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="mb-1.5 block text-sm font-semibold text-forest">Naam</span>
+            <span className="mb-1.5 block text-sm font-semibold text-forest">{copy.name}</span>
             <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} required />
           </label>
           <label className="block">
-            <span className="mb-1.5 block text-sm font-semibold text-forest">E-mail</span>
+            <span className="mb-1.5 block text-sm font-semibold text-forest">{copy.email}</span>
             <input type="email" className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} required />
           </label>
         </div>
         <label className="block">
-          <span className="mb-1.5 block text-sm font-semibold text-forest">Bericht</span>
+          <span className="mb-1.5 block text-sm font-semibold text-forest">{copy.message}</span>
           <textarea
             className={inputClass}
             rows={4}
@@ -83,7 +89,7 @@ export function PostContactForm({ slug }: { slug: string }) {
             disabled={status === "sending"}
             className="inline-flex items-center gap-2 rounded-full bg-orange px-8 py-3.5 text-sm font-bold uppercase tracking-[0.06em] text-white transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {status === "sending" ? "Bezig…" : "Versturen"}
+            {status === "sending" ? copy.sending : copy.button}
           </button>
         </div>
       </form>

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { PageFooter } from "../_ui/SiteChrome";
 import NewsletterForm from "../_ui/NewsletterForm";
 import { listPosts } from "@/lib/repo";
+import { getContent } from "@/lib/content/store";
+import Multiline from "../_ui/Multiline";
 
 // Reads published blogposts from the CMS DB. Dynamic so CMS edits appear live.
 export const dynamic = "force-dynamic";
@@ -17,12 +19,15 @@ function ArrowRight() {
   );
 }
 
-export const metadata = {
-  title: "Nieuws · Kroketco Belgium",
-  description: "Het laatste nieuws van Kroketco: nieuwe smaken, events, partners en meer.",
-};
+// Title + description are editable in /admin (Nieuws → Zoekmachines & tabblad).
+export async function generateMetadata() {
+  const seo = await getContent("nieuws.seo");
+  return { title: seo.title, description: seo.description };
+}
 
-export default function NieuwsPage() {
+export default async function NieuwsPage() {
+  const hero = await getContent("nieuws.hero");
+  const list = await getContent("nieuws.list");
   // Hide scheduled posts (published but with a future date) until their date.
   const today = new Date().toISOString().slice(0, 10);
   const posts = listPosts({ publishedOnly: true }).filter((p) => !p.publishedAt || p.publishedAt <= today);
@@ -33,9 +38,11 @@ export default function NieuwsPage() {
       <main className="min-h-screen bg-white text-forest [font-family:var(--font-inter),sans-serif]">
         <section className="px-6 pb-16 pt-40 text-center sm:px-12 lg:px-16">
           <h1 className="text-2xl uppercase tracking-tight" style={OSWALD}>
-            Nog geen nieuws
+            {list.emptyTitle}
           </h1>
-          <p className="mt-3 text-forest/70">Kom binnenkort terug voor het laatste van Kroketco.</p>
+          <p className="mt-3 text-forest/70">
+            <Multiline text={list.emptyText} />
+          </p>
         </section>
         <PageFooter />
       </main>
@@ -47,32 +54,36 @@ export default function NieuwsPage() {
       {/* HERO — short */}
       <section className="relative overflow-hidden bg-[var(--light-blue)]">
         {/* decorative: chef (mirrored) on the left, hand + fork coming in from the right */}
-        <img
-          src="/kroketten/chef.png"
-          alt=""
-          aria-hidden
-          className="pointer-events-none absolute bottom-0 left-0 hidden w-[clamp(180px,20vw,330px)] drop-shadow-[0_16px_30px_rgba(14,75,58,0.25)] lg:block"
-          style={{ transform: "scaleX(-1)" }}
-        />
-        <img
-          src="/kroketten/deco-vork.png"
-          alt=""
-          aria-hidden
-          className="pointer-events-none absolute right-[-2%] top-1/2 hidden w-[clamp(150px,17vw,260px)] -translate-y-1/2 -rotate-[70deg] drop-shadow-[0_16px_30px_rgba(14,75,58,0.25)] lg:block"
-        />
+        {hero.imageLeft && (
+          <img
+            src={hero.imageLeft}
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute bottom-0 left-0 hidden w-[clamp(180px,20vw,330px)] drop-shadow-[0_16px_30px_rgba(14,75,58,0.25)] lg:block"
+            style={{ transform: "scaleX(-1)" }}
+          />
+        )}
+        {hero.imageRight && (
+          <img
+            src={hero.imageRight}
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute right-[-2%] top-1/2 hidden w-[clamp(150px,17vw,260px)] -translate-y-1/2 -rotate-[70deg] drop-shadow-[0_16px_30px_rgba(14,75,58,0.25)] lg:block"
+          />
+        )}
         <div className="relative mx-auto max-w-[1480px] px-6 pb-12 pt-28 text-center sm:px-12 sm:pb-16 sm:pt-36 lg:px-16">
           <span className="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-forest/70">
             <span className="h-2 w-2 rounded-[2px] bg-orange" />
-            Nieuws
+            {hero.eyebrow}
           </span>
           <h1
             className="mx-auto mt-5 max-w-3xl text-[clamp(2.2rem,6vw,5rem)] uppercase leading-[0.95] tracking-[0.01em]"
             style={OSWALD}
           >
-            Het laatste van Kroketco
+            {hero.title}
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg font-medium text-forest/75">
-            Nieuwe smaken, events en verhalen van achter de schermen — ontdek wat er speelt.
+            <Multiline text={hero.text} />
           </p>
         </div>
       </section>
@@ -105,7 +116,7 @@ export default function NieuwsPage() {
               </h2>
               <p className="mt-4 max-w-xl text-forest/75">{featured.excerpt}</p>
               <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.06em] text-orange">
-                Lees meer <ArrowRight />
+                {list.readMore} <ArrowRight />
               </span>
             </div>
           </Link>
@@ -137,7 +148,7 @@ export default function NieuwsPage() {
                   </h3>
                   <p className="mt-3 text-sm text-forest/70">{n.excerpt}</p>
                   <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-[0.06em] text-orange">
-                    Lees meer <ArrowRight />
+                    {list.readMore} <ArrowRight />
                   </span>
                 </div>
               </Link>

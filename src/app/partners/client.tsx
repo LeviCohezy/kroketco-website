@@ -2,6 +2,8 @@
 
 import { PageFooter } from "../_ui/SiteChrome";
 import ContactForm from "../_ui/ContactForm";
+import Multiline from "../_ui/Multiline";
+import { useContent } from "../_ui/ContentProvider";
 
 // Presentation shape for the partners grid. Data comes from the CMS DB via the
 // server page (see page.tsx).
@@ -113,6 +115,10 @@ function ScallopBadge({ logo, alt }: { logo: string; alt: string }) {
 
 export default function PartnersView({ partners }: { partners: PartnerCard[] }) {
   const c = COMBOS[0];
+  const hero = useContent("partners.hero");
+  const list = useContent("partners.list");
+  const contact = useContent("partners.contact");
+  const words = hero.marquee.map((m) => m.text).filter(Boolean);
   return (
     <main className="min-h-screen bg-white text-forest [font-family:var(--font-inter),sans-serif]">
       {/* HERO */}
@@ -121,15 +127,13 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="max-w-3xl text-[clamp(2.4rem,7vw,6rem)] uppercase leading-[0.9] tracking-[0.01em]" style={OSWALD}>
-                Sterk dankzij
+                {hero.titleLine1}
                 <br />
-                onze partners
+                {hero.titleLine2}
               </h1>
             </div>
             <p className="max-w-sm text-forest/75 lg:pb-3 lg:text-right">
-              Kroketco werkt samen met zorgvuldig gekozen versgroothandels in heel Vlaanderen —
-              samen brengen we onze ambachtelijke kroketten en verse puree tot bij de betere
-              traiteur en de horeca.
+              <Multiline text={hero.text} />
             </p>
           </div>
         </div>
@@ -142,25 +146,25 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
             muted
             loop
             playsInline
-            poster="/ugc/ugc-3.png"
+            poster={hero.poster || undefined}
+            key={hero.video}
           >
-            <source src="/video/partners.mp4" type="video/mp4" />
+            {hero.video && <source src={hero.video} type="video/mp4" />}
           </video>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/new-image-section/label-ambachtelijk.png"
-            alt="Ambachtelijk"
-            className="absolute right-4 top-4 w-[clamp(84px,11vw,150px)] rotate-[9deg] drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)] sm:right-10 sm:top-8"
-          />
-
-          <div className="pointer-events-none absolute inset-x-0 bottom-0">
-            <CurvedMarquee
-              words={["Sterk samen", "Lokaal", "Dagvers", "Betrouwbaar", "Ambachtelijk", "Puur Belgisch"]}
-              band={c.band}
-              ink={c.ink}
-              surface={c.section}
+          {hero.sticker && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={hero.sticker}
+              alt={hero.stickerAlt}
+              className="absolute right-4 top-4 w-[clamp(84px,11vw,150px)] rotate-[9deg] drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)] sm:right-10 sm:top-8"
             />
-          </div>
+          )}
+
+          {words.length > 0 && (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0">
+              <CurvedMarquee words={words} band={c.band} ink={c.ink} surface={c.section} />
+            </div>
+          )}
         </div>
       </section>
 
@@ -168,7 +172,9 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
       <section className="px-6 pb-16 pt-10 sm:px-12 sm:pb-24 sm:pt-14 lg:px-16" style={{ backgroundColor: c.section }}>
         <div className="mx-auto max-w-[1480px]">
           {partners.length === 0 ? (
-            <p className="text-center text-forest/60">Binnenkort meer over onze partners.</p>
+            <p className="text-center text-forest/60">
+              <Multiline text={list.empty} />
+            </p>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {partners.map((p) => (
@@ -211,7 +217,7 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
                       href={`/partners/${p.slug}`}
                       className="mt-6 inline-flex w-fit items-center gap-1.5 rounded-lg bg-forest px-5 py-3.5 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.02]"
                     >
-                      Meer info <ArrowRight />
+                      {list.moreInfo} <ArrowRight />
                     </a>
                   </div>
                 </article>
@@ -223,9 +229,9 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
 
       <ContactForm
         source="partners"
-        eyebrow="Samenwerken?"
-        heading="Word partner van Kroketco"
-        text="Groothandel, traiteur of horeca? Laat je gegevens achter en we bekijken samen wat we voor je kunnen betekenen."
+        eyebrow={contact.eyebrow}
+        heading={contact.title}
+        text={contact.text}
       />
 
       <PageFooter />
