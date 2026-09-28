@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useContent } from "@/app/_ui/ContentProvider";
+import { EditableText, EditableImage } from "@/app/_ui/edit/Editable";
 
 export default function BestSellers({ squareBottom = false }: { squareBottom?: boolean }) {
   const { items: FEATURES } = useContent("home.features");
@@ -35,14 +36,23 @@ export default function BestSellers({ squareBottom = false }: { squareBottom?: b
               className="reveal flex flex-col items-center gap-4 px-2 text-center"
               style={{ transitionDelay: `${i * 70}ms` }}
             >
-              <img
-                src={f.icon}
-                alt=""
-                className="h-[clamp(64px,6.5vw,98px)] w-auto object-contain"
-              />
-              <span className="mx-auto max-w-[8.5rem] text-[16px] font-extrabold leading-[1.15] text-forest sm:text-[19px]">
-                {f.label}
+              <span className="relative inline-block">
+                <EditableImage
+                  section="home.features"
+                  listField="items"
+                  index={i}
+                  itemKey="icon"
+                  className="h-[clamp(64px,6.5vw,98px)] w-auto object-contain"
+                />
               </span>
+              <EditableText
+                as="span"
+                section="home.features"
+                listField="items"
+                index={i}
+                itemKey="label"
+                className="mx-auto block max-w-[8.5rem] text-[16px] font-extrabold leading-[1.15] text-forest sm:text-[19px]"
+              />
             </div>
           ))}
         </div>

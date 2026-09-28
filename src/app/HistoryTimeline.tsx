@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useContent } from "@/app/_ui/ContentProvider";
-import Multiline from "@/app/_ui/Multiline";
+import { EditableText, EditableImage, EditableLink } from "@/app/_ui/edit/Editable";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -88,22 +88,23 @@ export default function HistoryTimeline() {
         <div className="mx-auto flex w-full max-w-[1480px] items-center justify-between gap-8 px-6 sm:px-12 lg:px-16">
           <div>
             <p className="mb-5 flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.28em] text-lime">
-              <span className="h-2 w-2 rounded-[2px] bg-lime" /> {c.eyebrow}
+              <span className="h-2 w-2 rounded-[2px] bg-lime" /> <EditableText as="span" section="home.history" field="eyebrow" />
             </p>
-            <h2
-              className="max-w-3xl text-[clamp(2.2rem,6vw,4.6rem)] uppercase leading-[0.95] tracking-[0.01em] text-lime"
+            <EditableText
+              as="h2"
+              section="home.history"
+              field="title"
+              className="block max-w-3xl text-[clamp(2.2rem,6vw,4.6rem)] uppercase leading-[0.95] tracking-[0.01em] text-lime"
               style={OSWALD}
-            >
-              {c.title}
-            </h2>
+            />
           </div>
 
           {/* 10-point star mask holding an image, next to the title */}
           {c.image && (
-          <div className="hidden shrink-0 sm:block" style={{ transform: "rotate(-8deg)" }} aria-hidden>
-            <img
-              src={c.image}
-              alt=""
+          <div className="relative hidden shrink-0 sm:block" style={{ transform: "rotate(-8deg)" }}>
+            <EditableImage
+              section="home.history"
+              field="image"
               className="h-[clamp(110px,13vw,180px)] w-[clamp(110px,13vw,180px)] object-cover"
               style={{ clipPath: STAR_10 }}
             />
@@ -154,18 +155,28 @@ export default function HistoryTimeline() {
                   zIndex: Math.round(100 - dist),
                 }}
               >
-                <span
-                  className="pointer-events-none leading-none text-cream"
+                <EditableText
+                  as="span"
+                  section="home.history"
+                  listField="entries"
+                  index={i}
+                  itemKey="year"
+                  className="block leading-none text-cream"
                   style={{ ...OSWALD, fontSize: "clamp(72px, 12.5vw, 184px)" }}
-                >
-                  {it.year}
-                </span>
+                />
                 <span className="mt-3 whitespace-nowrap rounded-full bg-lime px-6 py-2.5 text-[12px] font-bold uppercase tracking-[0.08em] text-forest sm:mt-5 sm:text-[14px]">
-                  {"•  "}{it.tag}{"  •"}
+                  {"•  "}
+                  <EditableText as="span" section="home.history" listField="entries" index={i} itemKey="tag" />
+                  {"  •"}
                 </span>
-                <p className="mt-4 max-w-[30ch] text-[15px] font-medium leading-relaxed text-cream/90 sm:mt-5 sm:text-[16px]">
-                  <Multiline text={it.text} />
-                </p>
+                <EditableText
+                  as="p"
+                  section="home.history"
+                  listField="entries"
+                  index={i}
+                  itemKey="text"
+                  className="mt-4 max-w-[30ch] text-[15px] font-medium leading-relaxed text-cream/90 sm:mt-5 sm:text-[16px]"
+                />
               </article>
             );
           })}
@@ -173,12 +184,12 @@ export default function HistoryTimeline() {
 
         {c.buttonHref && (
         <div className="mt-6 flex justify-center lg:mt-10">
-          <a
-            href={c.buttonHref}
+          <EditableLink
+            section="home.history"
+            labelField="buttonLabel"
+            hrefField="buttonHref"
             className="inline-flex items-center gap-2 rounded-lg bg-lime px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-forest transition-transform hover:scale-[1.03]"
-          >
-            {c.buttonLabel}
-          </a>
+          />
         </div>
         )}
       </div>

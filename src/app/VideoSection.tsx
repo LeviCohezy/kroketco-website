@@ -1,12 +1,32 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useContent } from "@/app/_ui/ContentProvider";
+import { useEffect, useRef, useState } from "react";
+import { useContent, useEditor } from "@/app/_ui/ContentProvider";
 
 export default function VideoSection() {
   const { video } = useContent("home.video");
+  const { editing, updateField } = useEditor();
   const wrapRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLVideoElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setBusy(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/uploads", { method: "POST", body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.url) updateField("home.video", "video", data.url);
+      else alert(data.error || "Upload mislukt");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   // Scroll-scrub: the video's frame follows scroll (down = forward, up = reverse,
   // stop = hold). A continuous rAF loop eases the playback position toward the
@@ -87,6 +107,18 @@ export default function VideoSection() {
         >
           <source src={video} type="video/mp4" />
         </video>
+        {editing && (
+          <>
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="absolute left-2 top-2 z-30 rounded-full bg-forest/90 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.06em] text-cream shadow-lg transition hover:bg-forest"
+            >
+              {busy ? "Uploaden…" : "Wijzig video"}
+            </button>
+            <input ref={fileRef} type="file" accept="video/*" hidden onChange={onPick} />
+          </>
+        )}
       </div>
     </section>
   );

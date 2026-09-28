@@ -15,11 +15,11 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const authed = verifySession(token);
 
-  // Protect the dashboard (but not the login page or its auth API).
-  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
+  // Protect the dashboard. Login happens on the public /login-admin page.
+  if (pathname.startsWith("/admin")) {
     if (!authed) {
       const url = request.nextUrl.clone();
-      url.pathname = "/admin/login";
+      url.pathname = "/login-admin";
       url.searchParams.set("next", pathname);
       return NextResponse.redirect(url);
     }

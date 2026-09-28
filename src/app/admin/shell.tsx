@@ -5,12 +5,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ComponentType, ReactNode, SVGProps } from "react";
 import { useToast } from "./ui";
-import { BlogIcon, ProductIcon, PartnersIcon, InboxIcon, LogoutIcon, PagesIcon } from "./icons";
+import { BlogIcon, ProductIcon, PartnersIcon, InboxIcon, LogoutIcon } from "./icons";
 
 type NavItem = { href: string; label: string; icon: ComponentType<SVGProps<SVGSVGElement>> };
 
 const NAV: NavItem[] = [
-  { href: "/admin/inhoud", label: "Website teksten", icon: PagesIcon },
   { href: "/admin/blog", label: "Blog posts", icon: BlogIcon },
   { href: "/admin/producten", label: "Producten", icon: ProductIcon },
   { href: "/admin/partners", label: "Partners", icon: PartnersIcon },
@@ -25,7 +24,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
     toast("Uitgelogd");
-    router.push("/admin/login");
+    router.push("/login-admin");
     router.refresh();
   }
 

@@ -8,8 +8,8 @@ import Marquee from "./Marquee";
 import VideoSection from "./VideoSection";
 import ContactFields from "./_ui/ContactFields";
 import { PageFooter } from "./_ui/SiteChrome";
-import { useContent } from "./_ui/ContentProvider";
-import { EditableText, EditableImage, EditableLink } from "./_ui/edit/Editable";
+import { useContent, useEditor } from "./_ui/ContentProvider";
+import { EditableText, EditableImage, EditableLink, EditableVideo } from "./_ui/edit/Editable";
 
 function ArrowRight() {
   return (
@@ -93,6 +93,7 @@ export default function HomeV3() {
   const photo = useContent("home.photo");
   const partners = useContent("home.partners");
   const contact = useContent("home.contact");
+  const { editing } = useEditor();
   const ABOUT = aboutWords(intro.parts);
   const PRODUCTS = products.items;
   const PARTNERS = partners.partners;
@@ -265,16 +266,12 @@ export default function HomeV3() {
       {/* ============================ STICKY HERO ============================ */}
       <section ref={heroRef} className="sticky top-0 z-0 h-screen min-h-[640px] w-full overflow-hidden">
         {/* pinned background video */}
-        <video
-          className="hero-anim hero-zoom absolute inset-0 h-full w-full object-cover object-[70%_center]"
-          autoPlay
-          muted
-          loop
-          playsInline
+        <EditableVideo
+          section="home.hero"
+          field="video"
           poster={hero.poster || undefined}
-        >
-          <source src={hero.video} type="video/mp4" />
-        </video>
+          className="hero-anim hero-zoom absolute inset-0 h-full w-full object-cover object-[70%_center]"
+        />
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
 
@@ -339,11 +336,29 @@ export default function HomeV3() {
               ref={textRef}
               className="text-[clamp(1.4rem,3.1vw,2.45rem)] font-medium leading-[1.3] tracking-tight [text-align:justify]"
             >
-              {ABOUT.map((w, i) => (
-                <span key={i} className={`rw${w.a ? " accent font-semibold" : ""}`}>
-                  {w.t}{" "}
-                </span>
-              ))}
+              {editing
+                ? intro.parts.map((part, i) => (
+                    <span key={i}>
+                      <EditableText as="span" section="home.intro" listField="parts" index={i} itemKey="text" />{" "}
+                      {(part.accent || editing) && (
+                        <>
+                          <EditableText
+                            as="span"
+                            section="home.intro"
+                            listField="parts"
+                            index={i}
+                            itemKey="accent"
+                            className="font-semibold text-orange"
+                          />{" "}
+                        </>
+                      )}
+                    </span>
+                  ))
+                : ABOUT.map((w, i) => (
+                    <span key={i} className={`rw${w.a ? " accent font-semibold" : ""}`}>
+                      {w.t}{" "}
+                    </span>
+                  ))}
             </p>
 
             <div className="reveal flex flex-col gap-4 sm:flex-row lg:flex-col" style={{ transitionDelay: "0.1s" }}>
@@ -395,21 +410,24 @@ export default function HomeV3() {
                 className="reveal group flex aspect-[4/5] w-[80vw] shrink-0 snap-start flex-col rounded-[28px] bg-white p-6 text-forest sm:w-[360px]"
                 style={{ transitionDelay: `${i * 90}ms` }}
               >
-                <h3
-                  className="text-center text-[clamp(1.35rem,2vw,1.8rem)] uppercase leading-[1.05] tracking-tight"
+                <EditableText
+                  as="h3"
+                  section="home.products"
+                  listField="items"
+                  index={i}
+                  itemKey="name"
+                  className="block text-center text-[clamp(1.35rem,2vw,1.8rem)] uppercase leading-[1.05] tracking-tight"
                   style={{ fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }}
-                >
-                  {p.name}
-                </h3>
+                />
                 <div className="relative my-5 flex-1 overflow-hidden rounded-[20px] bg-[#f5f4ef]">
-                  {p.image && <Image src={p.image} alt={p.name} fill sizes="360px" className="object-cover transition-transform duration-500 group-hover:scale-105" />}
+                  {p.image && <EditableImage section="home.products" listField="items" index={i} itemKey="image" alt={p.name} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />}
                 </div>
                 {p.href && (
                 <a
                   href={p.href}
                   className="rounded-lg bg-orange px-6 py-4 text-center text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.02]"
                 >
-                  {products.buttonLabel}
+                  <EditableText as="span" section="home.products" field="buttonLabel" />
                 </a>
                 )}
               </article>
@@ -437,17 +455,17 @@ export default function HomeV3() {
            Timeline scrolls up and overlaps it. ============ */}
       <div className="relative isolate">
         <section className="sticky top-0 z-0 w-full overflow-hidden">
-          <picture>
-            <source
-              media="(max-width: 640px) and (orientation: portrait)"
-              srcSet={photo.imagePortrait || photo.image}
-            />
-            <img
-              src={photo.image}
-              alt={photo.alt}
-              className="block h-auto w-full"
-            />
-          </picture>
+          {editing ? (
+            <EditableImage section="home.photo" field="image" alt={photo.alt} className="block h-auto w-full" />
+          ) : (
+            <picture>
+              <source
+                media="(max-width: 640px) and (orientation: portrait)"
+                srcSet={photo.imagePortrait || photo.image}
+              />
+              <img src={photo.image} alt={photo.alt} className="block h-auto w-full" />
+            </picture>
+          )}
 
           {/* sticker labels */}
           {photo.stickers.map((st, i) =>

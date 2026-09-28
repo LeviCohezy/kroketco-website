@@ -89,8 +89,9 @@ export function EditableImage({
   index,
   itemKey,
   className,
+  style,
   alt = "",
-}: Binding & { className?: string; alt?: string }) {
+}: Binding & { className?: string; style?: CSSProperties; alt?: string }) {
   const { content, editing, updateField, updateItem } = useEditor();
   const value = readValue(content as Record<string, unknown>, { section, field, listField, index, itemKey });
   const inputRef = useRef<HTMLInputElement>(null);
@@ -121,22 +122,86 @@ export function EditableImage({
   }
 
   // eslint-disable-next-line @next/next/no-img-element
-  const img = <img src={value} alt={alt} className={className} />;
+  const img = (
+    <img src={value} alt={alt} style={style} className={editing ? `${className ?? ""} outline outline-2 outline-dashed outline-orange/70` : className} />
+  );
   if (!editing) return img;
 
-  // The overlay is absolutely positioned — the parent element in the page is
-  // already a positioned (relative) container in every place we use this.
+  // Small corner pill (not a full overlay) so it never blocks foreground content
+  // sitting on top of a background image. Parent is a positioned container.
   return (
     <>
       {img}
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="absolute inset-0 z-20 grid place-items-center bg-forest/55 text-[12px] font-bold uppercase tracking-[0.06em] text-cream opacity-0 outline-1 outline-dashed outline-orange transition-opacity hover:opacity-100"
+        className="absolute left-2 top-2 z-30 rounded-full bg-forest/90 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.06em] text-cream shadow-lg transition hover:bg-forest"
       >
         {busy ? "Uploaden…" : "Wijzig afbeelding"}
       </button>
       <input ref={inputRef} type="file" accept="image/*" hidden onChange={onPick} />
+    </>
+  );
+}
+
+// ——— Video (background) ———
+export function EditableVideo({
+  section,
+  field,
+  poster,
+  className,
+}: Binding & { poster?: string; className?: string }) {
+  const { content, editing, updateField } = useEditor();
+  const value = readValue(content as Record<string, unknown>, { section, field });
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setBusy(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/uploads", { method: "POST", body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.url) updateField(section, field as string, data.url);
+      else alert(data.error || "Upload mislukt");
+    } catch {
+      alert("Upload mislukt");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const video = (
+    <video
+      className={editing ? `${className ?? ""} outline outline-2 outline-dashed outline-orange/70` : className}
+      poster={poster}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      key={value}
+    >
+      <source src={value} type="video/mp4" />
+    </video>
+  );
+  if (!editing) return video;
+
+  return (
+    <>
+      {video}
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="absolute left-2 top-2 z-30 rounded-full bg-forest/90 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.06em] text-cream shadow-lg transition hover:bg-forest"
+      >
+        {busy ? "Uploaden…" : "Wijzig video"}
+      </button>
+      <input ref={inputRef} type="file" accept="video/*" hidden onChange={onPick} />
     </>
   );
 }
