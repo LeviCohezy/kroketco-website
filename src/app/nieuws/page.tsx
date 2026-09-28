@@ -2,7 +2,10 @@
 import Link from "next/link";
 import { PageFooter } from "../_ui/SiteChrome";
 import NewsletterForm from "../_ui/NewsletterForm";
-import { NEWS } from "./news-data";
+import { listPosts } from "@/lib/repo";
+
+// Reads published blogposts from the CMS DB. Dynamic so CMS edits appear live.
+export const dynamic = "force-dynamic";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -20,7 +23,24 @@ export const metadata = {
 };
 
 export default function NieuwsPage() {
-  const [featured, ...rest] = NEWS;
+  // Hide scheduled posts (published but with a future date) until their date.
+  const today = new Date().toISOString().slice(0, 10);
+  const posts = listPosts({ publishedOnly: true }).filter((p) => !p.publishedAt || p.publishedAt <= today);
+  const [featured, ...rest] = posts;
+
+  if (!featured) {
+    return (
+      <main className="min-h-screen bg-white text-forest [font-family:var(--font-inter),sans-serif]">
+        <section className="px-6 pb-16 pt-40 text-center sm:px-12 lg:px-16">
+          <h1 className="text-2xl uppercase tracking-tight" style={OSWALD}>
+            Nog geen nieuws
+          </h1>
+          <p className="mt-3 text-forest/70">Kom binnenkort terug voor het laatste van Kroketco.</p>
+        </section>
+        <PageFooter />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-white text-forest [font-family:var(--font-inter),sans-serif]">
@@ -67,7 +87,7 @@ export default function NieuwsPage() {
           >
             <div className="relative aspect-[16/10] overflow-hidden lg:aspect-auto">
               <img
-                src={featured.image}
+                src={featured.coverImage}
                 alt={featured.title}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -75,7 +95,7 @@ export default function NieuwsPage() {
             <div className="flex flex-col justify-center p-8 sm:p-10 lg:p-12">
               <div className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.08em]">
                 <span className="rounded-full bg-lime px-3 py-1 text-forest">{featured.category}</span>
-                <time className="text-forest/50" dateTime={featured.date}>{featured.dateLabel}</time>
+                <time className="text-forest/50" dateTime={featured.publishedAt}>{featured.dateLabel}</time>
               </div>
               <h2
                 className="mt-5 text-[clamp(1.7rem,3vw,2.6rem)] uppercase leading-[1.02] tracking-tight"
@@ -100,7 +120,7 @@ export default function NieuwsPage() {
               >
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <img
-                    src={n.image}
+                    src={n.coverImage}
                     alt={n.title}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -109,7 +129,7 @@ export default function NieuwsPage() {
                   </span>
                 </div>
                 <div className="flex flex-1 flex-col p-6">
-                  <time className="text-[12px] font-semibold uppercase tracking-[0.08em] text-forest/50" dateTime={n.date}>
+                  <time className="text-[12px] font-semibold uppercase tracking-[0.08em] text-forest/50" dateTime={n.publishedAt}>
                     {n.dateLabel}
                   </time>
                   <h3 className="mt-2 text-[clamp(1.2rem,2vw,1.6rem)] uppercase leading-[1.05] tracking-tight" style={OSWALD}>

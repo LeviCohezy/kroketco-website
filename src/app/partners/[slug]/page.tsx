@@ -2,46 +2,58 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageFooter } from "../../_ui/SiteChrome";
-import WorkWithUsForm from "../../_ui/WorkWithUsForm";
-import { PARTNERS } from "../partners-data";
+import { getPartnerBySlug } from "@/lib/repo";
+import { renderPostBody } from "../../admin/_editor/render";
+import { PostContactForm } from "../../nieuws/[slug]/PostContactForm";
+
+// Per-partner detail page, driven by the CMS. Dynamic so edits appear live;
+// 404 when the partner is missing or not published.
+export const dynamic = "force-dynamic";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
-export function generateStaticParams() {
-  return PARTNERS.map((p) => ({ slug: p.slug }));
-}
-
 export default async function PartnerDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = PARTNERS.find((x) => x.slug === slug);
-  if (!p) notFound();
+  const p = getPartnerBySlug(slug);
+  if (!p || !p.published) notFound();
+
+  // Rich body → sanitized HTML with the same extensions as the editor.
+  const bodyHtml = renderPostBody(p.body);
 
   return (
     <main className="min-h-screen bg-white text-forest [font-family:var(--font-inter),sans-serif]">
-      {/* HERO — partner image + name */}
+      {/* HERO — partner thumbnail + name (logo fallback) */}
       <section className="relative">
         <div className="relative h-[52vh] min-h-[360px] w-full overflow-hidden">
-          {p.card ? (
-            <img src={p.card} alt={p.name} className="h-full w-full object-cover" />
+          {p.thumbnail ? (
+            <img src={p.thumbnail} alt={p.name} className="h-full w-full object-cover" />
           ) : (
             <div className="grid h-full w-full place-items-center bg-[var(--light-blue)] p-10">
-              <img src={p.logo} alt={p.name} className="max-h-[45%] max-w-[70%] object-contain" />
+              {p.logo ? (
+                <img src={p.logo} alt={p.name} className="max-h-[45%] max-w-[70%] object-contain" />
+              ) : (
+                <span className="text-[clamp(2rem,6vw,4rem)] uppercase text-forest" style={OSWALD}>
+                  {p.name}
+                </span>
+              )}
             </div>
           )}
-          {p.card && <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10" />}
+          {p.thumbnail && <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10" />}
 
           <div className="absolute inset-0 flex items-end">
             <div className="mx-auto w-full max-w-[1100px] px-6 pb-10 sm:px-12 sm:pb-14 lg:px-16">
-              <span
-                className={`inline-block rounded-full px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.1em] ${
-                  p.card ? "bg-lime text-forest" : "bg-forest text-cream"
-                }`}
-              >
-                {p.tagline}
-              </span>
+              {p.city && (
+                <span
+                  className={`inline-block rounded-full px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.1em] ${
+                    p.thumbnail ? "bg-lime text-forest" : "bg-forest text-cream"
+                  }`}
+                >
+                  {p.city}
+                </span>
+              )}
               <h1
                 className={`mt-4 text-[clamp(2.2rem,6vw,4.6rem)] uppercase leading-[0.95] tracking-[0.01em] ${
-                  p.card ? "text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)]" : "text-forest"
+                  p.thumbnail ? "text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)]" : "text-forest"
                 }`}
                 style={OSWALD}
               >
@@ -52,18 +64,21 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
         </div>
       </section>
 
-      {/* WIE ZIJN ZE */}
+      {/* WIE ZIJN ZE — rich body + description */}
       <section className="px-6 py-16 sm:px-12 sm:py-24 lg:px-16">
         <div className="mx-auto max-w-[820px]">
           <span className="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-forest/70">
             <span className="h-2 w-2 rounded-[2px] bg-orange" />
             Wie zijn ze?
           </span>
-          <div className="mt-6 space-y-5 text-lg leading-relaxed text-forest/80">
-            {p.body.map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
-          </div>
+
+          {p.description && (
+            <p className="mt-6 text-[clamp(1.15rem,2vw,1.4rem)] font-medium leading-relaxed text-forest">
+              {p.description}
+            </p>
+          )}
+
+          <div className="mt-6 tt-prose" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
 
           <Link
             href="/partners"
@@ -71,11 +86,11 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
           >
             ← Terug naar partners
           </Link>
+
+          {/* Contact form at the end — shown by default; the CMS can turn it off. */}
+          {p.showForm ? <PostContactForm slug={p.slug} /> : null}
         </div>
       </section>
-
-      {/* WERK MET ONS */}
-      <WorkWithUsForm partner={p.name} />
 
       <PageFooter />
     </main>

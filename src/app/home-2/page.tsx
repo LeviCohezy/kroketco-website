@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import VideoSection from "../VideoSection";
 import BestSellers from "../BestSellers";
+import { PageFooter } from "../_ui/SiteChrome";
 
 function ArrowRight() {
   return (
@@ -280,6 +281,8 @@ export default function HomeTwo() {
           </div>
         </div>
       </section>
+
+      <PageFooter />
     </main>
   );
 }

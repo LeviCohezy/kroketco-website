@@ -6,6 +6,8 @@ import HistoryTimeline from "./HistoryTimeline";
 import BestSellers from "./BestSellers";
 import Marquee from "./Marquee";
 import VideoSection from "./VideoSection";
+import ContactFields from "./_ui/ContactFields";
+import { PageFooter } from "./_ui/SiteChrome";
 
 function ArrowRight() {
   return (
@@ -614,54 +616,15 @@ export default function HomeV3() {
             Contacteer ons
           </h2>
 
-          <form onSubmit={(e) => e.preventDefault()} className="reveal mt-12 grid gap-5" style={{ transitionDelay: "0.12s" }}>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <input
-                type="text"
-                name="naam"
-                placeholder="Naam"
-                required
-                className="rounded-lg border border-forest/15 bg-white px-5 py-4 text-forest placeholder:text-forest/40 focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/40"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="E-mail"
-                required
-                className="rounded-lg border border-forest/15 bg-white px-5 py-4 text-forest placeholder:text-forest/40 focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/40"
-              />
-            </div>
-            <input
-              type="text"
-              name="onderwerp"
-              placeholder="Onderwerp"
-              className="rounded-lg border border-forest/15 bg-white px-5 py-4 text-forest placeholder:text-forest/40 focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/40"
-            />
-            <textarea
-              name="bericht"
-              placeholder="Je bericht"
-              rows={5}
-              required
-              className="resize-y rounded-lg border border-forest/15 bg-white px-5 py-4 text-forest placeholder:text-forest/40 focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/40"
-            />
-            <button
-              type="submit"
-              className="inline-flex w-fit items-center gap-2 rounded-lg bg-orange px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03]"
-            >
-              Verstuur <ArrowRight />
-            </button>
-          </form>
+          <div className="reveal mt-12" style={{ transitionDelay: "0.12s" }}>
+            <ContactFields source="home" />
+          </div>
         </div>
       </section>
       </div>
 
       {/* footer */}
-      <footer className="relative z-10 bg-forest px-6 py-12 text-cream sm:px-12 lg:px-16">
-        <div className="reveal mx-auto flex max-w-[1480px] flex-col items-center justify-between gap-4 text-sm sm:flex-row">
-          <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={2000} height={667} className="h-8 w-auto brightness-0 invert" />
-          <span className="text-cream/60">© 2026 Kroketco Belgium · Gent</span>
-        </div>
-      </footer>
+      <PageFooter />
     </main>
   );
 }

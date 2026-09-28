@@ -1,9 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useEffect, useRef, useState, type ComponentType } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { PageFooter } from "../_ui/SiteChrome";
+import ContactFields from "../_ui/ContactFields";
+import { AllergenIcon, ALLERGEN_MAP } from "@/lib/allergens";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -21,57 +23,7 @@ function ArrowRight() {
   );
 }
 
-type Category = "Kroketten" | "Mini's & borrelhapjes" | "Puree" | "Vegetarisch";
-
-type AllergenCode = "G" | "M" | "E" | "N" | "S";
-
-// —— Allergen icons — each allergen gets its own icon + unique colour ——
-const IconSvg = { fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" } as const;
-
-function WheatIcon() {
-  return (
-    <svg viewBox="0 0 24 24" {...IconSvg} className="h-[15px] w-[15px]">
-      <path d="M12 21V8" />
-      <path d="M12 8c0-2.2 1.6-3.8 3.8-3.8C15.8 6.4 14.2 8 12 8Z" />
-      <path d="M12 8c0-2.2-1.6-3.8-3.8-3.8C8.2 6.4 9.8 8 12 8Z" />
-      <path d="M12 13c0-2.2 1.6-3.8 3.8-3.8C15.8 11.4 14.2 13 12 13Z" />
-      <path d="M12 13c0-2.2-1.6-3.8-3.8-3.8C8.2 11.4 9.8 13 12 13Z" />
-    </svg>
-  );
-}
-function MilkIcon() {
-  return (
-    <svg viewBox="0 0 24 24" {...IconSvg} className="h-[15px] w-[15px]">
-      <path d="M8 8h8v11a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8Z" />
-      <path d="M8 8l1.4-3h5.2L16 8" />
-      <path d="M10.5 13h3" />
-    </svg>
-  );
-}
-function EggIcon() {
-  return (
-    <svg viewBox="0 0 24 24" {...IconSvg} className="h-[15px] w-[15px]">
-      <path d="M12 3c3 0 5.5 5 5.5 9a5.5 5.5 0 0 1-11 0c0-4 2.5-9 5.5-9Z" />
-    </svg>
-  );
-}
-function NutIcon() {
-  return (
-    <svg viewBox="0 0 24 24" {...IconSvg} className="h-[15px] w-[15px]">
-      <circle cx="12" cy="8.5" r="4" />
-      <circle cx="12" cy="15" r="5" />
-    </svg>
-  );
-}
-function CeleryIcon() {
-  return (
-    <svg viewBox="0 0 24 24" {...IconSvg} className="h-[15px] w-[15px]">
-      <path d="M12 21c-1-5-3.5-8-7-9 3.5-1 6.5 1 7 5" />
-      <path d="M12 21c1-5 3.5-8 7-9-3.5-1-6.5 1-7 5" />
-      <path d="M12 21v-8" />
-    </svg>
-  );
-}
+type Category = "Kroketten" | "Mini's & borrelhapjes" | "Aardappel" | "Puree" | "Vegetarisch";
 
 function CroquetteIcon() {
   return (
@@ -83,71 +35,21 @@ function CroquetteIcon() {
   );
 }
 
-const ALLERGENS: Record<AllergenCode, { label: string; color: string; icon: ComponentType }> = {
-  G: { label: "Gluten", color: "#C98A15", icon: WheatIcon },
-  M: { label: "Melk (lactose)", color: "#2F80ED", icon: MilkIcon },
-  E: { label: "Ei", color: "#E0A106", icon: EggIcon },
-  N: { label: "Noten", color: "#9A6A3C", icon: NutIcon },
-  S: { label: "Selderij", color: "#3FA34D", icon: CeleryIcon },
-};
-
-function AllergenBadge({ code }: { code: AllergenCode }) {
-  const a = ALLERGENS[code];
-  const Icon = a.icon;
-  return (
-    <span
-      title={a.label}
-      aria-label={a.label}
-      className="inline-flex h-8 w-8 items-center justify-center rounded-full"
-      style={{ color: a.color, backgroundColor: `${a.color}1f` }}
-    >
-      <Icon />
-    </span>
-  );
-}
-
+// Presentation shape for a product card. Data now comes from the CMS DB and is
+// mapped to this shape by the server page (see page.tsx). `allergens` is a list
+// of allergen codes (see src/lib/allergens).
 type Product = {
+  slug: string;
   name: string;
   sub: string;
-  allergens: AllergenCode[];
+  allergens: string[];
   src: string;
   frame: string;
   category: Category;
   veggie?: boolean;
 };
 
-const FRAMES = [
-  "var(--frame-lime)",
-  "var(--frame-pink)",
-  "var(--frame-purple)",
-  "var(--frame-orange)",
-  "var(--frame-gold)",
-  "var(--frame-blue)",
-];
-
-const IMG = {
-  kaas: "/kroketten/prod-kaas.jpg",
-  klassiek: "/kroketten/prod-klassiek.jpg",
-  garnaal: "/kroketten/prod-garnaal.jpg",
-  beertjes: "/kroketten/prod-beertjes.jpg",
-} as const;
-
-const PRODUCTS: Product[] = [
-  { name: "Kaaskroket", sub: "4 stuks · romig", allergens: ["G", "M", "E"], src: IMG.kaas, frame: FRAMES[0], category: "Kroketten", veggie: true },
-  { name: "Klassieke kroket", sub: "12 stuks · ragout", allergens: ["G", "M", "E", "S"], src: IMG.klassiek, frame: FRAMES[1], category: "Kroketten" },
-  { name: "Garnaalkroket", sub: "4 stuks · Noordzee", allergens: ["G", "M", "E"], src: IMG.garnaal, frame: FRAMES[2], category: "Kroketten" },
-  { name: "Beertjes", sub: "4 stuks · voor de kids", allergens: ["G", "M", "E"], src: IMG.beertjes, frame: FRAMES[3], category: "Kroketten" },
-  { name: "Groentekroket", sub: "6 stuks · seizoensgroenten", allergens: ["G", "M", "S"], src: IMG.klassiek, frame: FRAMES[4], category: "Kroketten", veggie: true },
-  { name: "Kaas-prei kroket", sub: "6 stuks · romig-pittig", allergens: ["G", "M", "E"], src: IMG.kaas, frame: FRAMES[5], category: "Kroketten", veggie: true },
-  { name: "Mini kaas", sub: "24 stuks · borrel", allergens: ["G", "M", "E"], src: IMG.kaas, frame: FRAMES[1], category: "Mini's & borrelhapjes", veggie: true },
-  { name: "Mini garnaal", sub: "24 stuks · borrel", allergens: ["G", "M", "E"], src: IMG.garnaal, frame: FRAMES[2], category: "Mini's & borrelhapjes" },
-  { name: "Mini bittergarnituur", sub: "36 stuks · feestmix", allergens: ["G", "M", "E", "N"], src: IMG.beertjes, frame: FRAMES[3], category: "Mini's & borrelhapjes" },
-  { name: "Mini vlees", sub: "24 stuks · ragout", allergens: ["G", "M", "E", "S"], src: IMG.klassiek, frame: FRAMES[5], category: "Mini's & borrelhapjes" },
-  { name: "Ambachtelijke puree", sub: "1 kg · aardappel & boter", allergens: ["M"], src: IMG.klassiek, frame: FRAMES[0], category: "Puree", veggie: true },
-  { name: "Truffelpuree", sub: "500 g · zwarte truffel", allergens: ["M", "S"], src: IMG.kaas, frame: FRAMES[4], category: "Puree", veggie: true },
-];
-
-const CHIPS = ["Alles", "Kroketten", "Mini's & borrelhapjes", "Puree", "Vegetarisch"] as const;
+const CHIPS = ["Alles", "Kroketten", "Mini's & borrelhapjes", "Aardappel", "Puree", "Vegetarisch"] as const;
 type Chip = (typeof CHIPS)[number];
 
 function matches(p: Product, chip: Chip) {
@@ -156,9 +58,18 @@ function matches(p: Product, chip: Chip) {
   return p.category === chip;
 }
 
-export default function AssortimentPage() {
+export default function AssortimentView({ products }: { products: Product[] }) {
   const [active, setActive] = useState<Chip>("Alles");
-  const visible = PRODUCTS.filter((p) => matches(p, active));
+  const visible = products.filter((p) => matches(p, active));
+
+  // Allergen popup — holds the product whose allergens are being shown.
+  const [allergenInfo, setAllergenInfo] = useState<Product | null>(null);
+  useEffect(() => {
+    if (!allergenInfo) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setAllergenInfo(null);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [allergenInfo]);
 
   // Show at most 4 rows, then "load more". Column count is breakpoint-aware so
   // "4 rows" holds on mobile (1), tablet (2) and desktop (3).
@@ -252,21 +163,27 @@ export default function AssortimentPage() {
         </div>
       </section>
 
-      {/* Marquee band — scrolling brand words between hero and products */}
-      <div className="overflow-hidden bg-orange py-4 text-cream sm:py-5">
-        <div className="flex w-max animate-marquee items-center" style={{ animationDuration: "26s" }}>
-          {[...Array(2)].flatMap((_, set) =>
-            ["Lekker", "Smeuïg", "Ambachtelijk", "Smaakvol", "Knapperig", "Puur Belgisch"].map((w) => (
-              <span
-                key={`${set}-${w}`}
-                className="flex items-center whitespace-nowrap text-[clamp(1.05rem,2.4vw,1.9rem)] font-bold uppercase tracking-[0.04em]"
-                style={OSWALD}
-              >
-                {w}
-                <span className="mx-6 text-lime sm:mx-8">✦</span>
-              </span>
-            ))
-          )}
+      {/* Word band — static brand words between hero and products */}
+      <div className="bg-orange py-4 text-cream sm:py-5">
+        <div className="mx-auto flex max-w-[1480px] flex-wrap items-center justify-center gap-x-6 gap-y-2 px-6 sm:gap-x-8">
+          {["Lekker", "Smeuïg", "Ambachtelijk", "Smaakvol", "Knapperig", "Puur Belgisch"].map((w, i, arr) => (
+            <span
+              key={w}
+              className="flex items-center whitespace-nowrap text-[clamp(1.05rem,2.4vw,1.9rem)] font-bold uppercase tracking-[0.04em]"
+              style={OSWALD}
+            >
+              {w}
+              {i < arr.length - 1 && (
+                <span className="ml-6 flex items-center text-lime sm:ml-8" aria-hidden>
+                  <svg viewBox="0 0 24 16" fill="none" className="h-[0.7em] w-auto">
+                    <rect x="1" y="1" width="22" height="14" rx="7" fill="currentColor" opacity="0.2" />
+                    <rect x="1" y="1" width="22" height="14" rx="7" stroke="currentColor" strokeWidth="1.6" />
+                    <path d="M6 8h.01M10 9.5h.01M14 6.5h.01M18 8.5h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
+                </span>
+              )}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -302,19 +219,22 @@ export default function AssortimentPage() {
               const amount = p.sub.match(/\d+/)?.[0];
               return (
               <article
-                key={p.name}
+                key={p.slug}
                 className="group relative flex flex-col rounded-[26px] border border-forest/10 bg-white p-6 text-forest shadow-[0_18px_44px_-18px_rgba(14,75,58,0.28)] transition-all duration-300 hover:-translate-y-1.5 hover:border-forest/20 hover:shadow-[0_34px_66px_-22px_rgba(14,75,58,0.38)] sm:p-7"
               >
-                {/* allergen circle labels — top-right corner, stacked under each other */}
+                {/* allergen circle icons — top-right corner, overlapping stack.
+                    Click to open a popup that lists them by name. */}
                 {p.allergens.length > 0 && (
-                  <div
-                    className="absolute right-4 top-4 z-10 flex flex-col gap-2"
-                    aria-label="Allergenen"
+                  <button
+                    type="button"
+                    onClick={() => setAllergenInfo(p)}
+                    aria-label="Bekijk allergenen"
+                    className="absolute right-4 top-4 z-10 flex flex-col -space-y-2.5 transition-transform hover:scale-[1.06]"
                   >
                     {p.allergens.map((code) => (
-                      <AllergenBadge key={code} code={code} />
+                      <AllergenIcon key={code} code={code} className="h-8 w-8 ring-2 ring-white" />
                     ))}
-                  </div>
+                  </button>
                 )}
 
                 <div className="pr-12">
@@ -326,14 +246,14 @@ export default function AssortimentPage() {
                   </h3>
                 </div>
 
-                <div className="relative my-5 aspect-square overflow-hidden rounded-[20px] bg-[#f5f4ef]">
+                <div className="relative my-5 aspect-square overflow-hidden rounded-[20px] bg-white">
                   <img
                     src={p.src}
                     alt={p.name}
                     className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.07]"
                   />
                   {p.veggie && (
-                    <span className="absolute left-3 top-3 rounded-full bg-lime/95 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-forest shadow-sm">
+                    <span className="absolute left-3 top-3 rounded-full bg-lime px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-forest shadow-sm">
                       Veggie
                     </span>
                   )}
@@ -346,7 +266,7 @@ export default function AssortimentPage() {
                     </span>
                   )}
                   <Link
-                    href="/product"
+                    href={`/product/${p.slug}`}
                     className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-forest px-5 py-3.5 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.02]"
                   >
                     Meer info <ArrowRight />
@@ -435,46 +355,62 @@ export default function AssortimentPage() {
               elke dag opnieuw.
             </p>
 
-            <form onSubmit={(e) => e.preventDefault()} className="mt-4 grid w-full max-w-[620px] gap-4 text-left">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <input
-                  type="text"
-                  name="naam"
-                  placeholder="Naam"
-                  required
-                  className="rounded-lg border border-forest/15 bg-white px-5 py-4 text-forest placeholder:text-forest/40 focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/40"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="E-mail"
-                  required
-                  className="rounded-lg border border-forest/15 bg-white px-5 py-4 text-forest placeholder:text-forest/40 focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/40"
-                />
-              </div>
-              <input
-                type="text"
-                name="onderwerp"
-                placeholder="Onderwerp"
-                className="rounded-lg border border-forest/15 bg-white px-5 py-4 text-forest placeholder:text-forest/40 focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/40"
-              />
-              <textarea
-                name="bericht"
-                placeholder="Je bericht"
-                rows={5}
-                required
-                className="resize-y rounded-lg border border-forest/15 bg-white px-5 py-4 text-forest placeholder:text-forest/40 focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/40"
-              />
-              <button
-                type="submit"
-                className="mx-auto inline-flex w-fit items-center gap-2 rounded-lg bg-orange px-8 py-4 text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.03]"
-              >
-                Verstuur <ArrowRight />
-              </button>
-            </form>
+            <div className="mt-4 w-full max-w-[620px]">
+              <ContactFields source="producten" center />
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Allergen popup */}
+      {allergenInfo && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-5"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Allergenen — ${allergenInfo.name}`}
+          onClick={() => setAllergenInfo(null)}
+        >
+          <div className="absolute inset-0 bg-forest/60 backdrop-blur-sm" />
+          <div
+            className="relative w-full max-w-md rounded-[26px] bg-white p-7 text-forest shadow-[0_30px_80px_-20px_rgba(14,75,58,0.5)] sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setAllergenInfo(null)}
+              aria-label="Sluiten"
+              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-forest/50 transition-colors hover:bg-forest/5 hover:text-forest"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-orange">Allergenen</p>
+            <h3 className="mt-1.5 text-[clamp(1.4rem,3vw,1.9rem)] uppercase leading-[1.02]" style={OSWALD}>
+              {allergenInfo.name}
+            </h3>
+
+            <ul className="mt-6 space-y-3">
+              {allergenInfo.allergens.map((code) => {
+                const a = ALLERGEN_MAP[code];
+                if (!a) return null;
+                return (
+                  <li key={code} className="flex items-center gap-3.5">
+                    <AllergenIcon code={code} className="h-11 w-11" />
+                    <span className="text-[15px] font-semibold">{a.label}</span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <p className="mt-6 border-t border-forest/10 pt-4 text-[12px] leading-relaxed text-forest/50">
+              Kan sporen bevatten van andere allergenen. Raadpleeg steeds de verpakking.
+            </p>
+          </div>
+        </div>
+      )}
 
       <PageFooter />
     </main>

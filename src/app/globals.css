@@ -43,6 +43,30 @@ body {
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
 
+/* Tailwind v4's reset drops the pointer cursor on buttons. Restore it for any
+   enabled clickable element so actionable controls feel clickable. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label:has(> input[type="file"]),
+summary {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Handwritten script accent (Caveat). */
+.font-hand {
+  font-family: var(--font-hand), "Segoe Script", cursive;
+}
+
+/* Accessibility: a clear keyboard-focus indicator in the brand lime. Only shows
+   for keyboard/AT navigation (:focus-visible), not on mouse clicks. */
+:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+}
+
 /* Infinite horizontal marquee for the UGC card row. The track holds two
    identical card sets; shifting it -50% loops seamlessly. */
 @keyframes marquee {
@@ -160,6 +184,16 @@ html[data-theme="beige"] :is(section, main).bg-white {
   }
 }
 
+/* gentle continuous float for the "why Groendal" cards */
+@keyframes floatBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.float-bob { animation: floatBob 5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .float-bob { animation: none; }
+}
+
 /* v3 — partners list paging (each row rises + fades on page switch) */
 @keyframes partnerRowIn {
   from { opacity: 0; transform: translateY(14px); }
@@ -170,4 +204,204 @@ html[data-theme="beige"] :is(section, main).bg-white {
 }
 @media (prefers-reduced-motion: reduce) {
   .partner-row { animation: none; }
+}
+
+/* ===========================================================================
+   Rich text (.tt-prose) — shared by the CMS editor and the public
+   /nieuws/[slug] article so "Preview" matches the live page exactly.
+   Inter body, Oswald headings, forest text, orange accents.
+   =========================================================================== */
+.tt-prose {
+  color: var(--forest);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+.tt-prose > * + * { margin-top: 1.25em; }
+.tt-prose h1, .tt-prose h2, .tt-prose h3 {
+  font-family: var(--font-oswald), sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  color: var(--forest);
+}
+.tt-prose h1 { font-size: clamp(1.9rem, 4vw, 2.8rem); margin-top: 1.6em; }
+.tt-prose h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-top: 1.5em; }
+.tt-prose h3 { font-size: clamp(1.3rem, 2.4vw, 1.7rem); margin-top: 1.3em; }
+.tt-prose p { color: color-mix(in srgb, var(--forest) 80%, transparent); }
+.tt-prose a {
+  color: var(--orange);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 600;
+}
+.tt-prose strong { color: var(--forest); font-weight: 700; }
+.tt-prose ul, .tt-prose ol { padding-left: 1.5em; }
+.tt-prose ul { list-style: disc; }
+.tt-prose ol { list-style: decimal; }
+.tt-prose li { margin-top: 0.4em; color: color-mix(in srgb, var(--forest) 80%, transparent); }
+.tt-prose li > p { margin: 0; }
+.tt-prose blockquote {
+  border-left: 4px solid var(--lime);
+  padding-left: 1.5rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  color: var(--forest);
+}
+.tt-prose blockquote p { color: var(--forest); }
+.tt-prose hr {
+  border: 0;
+  border-top: 2px solid color-mix(in srgb, var(--forest) 12%, transparent);
+  margin: 2em 0;
+}
+.tt-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  background: color-mix(in srgb, var(--forest) 8%, transparent);
+  padding: 0.15em 0.4em;
+  border-radius: 6px;
+}
+.tt-prose pre {
+  background: var(--forest);
+  color: var(--cream);
+  padding: 1.1rem 1.3rem;
+  border-radius: 16px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.tt-prose pre code { background: none; padding: 0; color: inherit; }
+.tt-prose img.tt-image, .tt-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 20px;
+  margin: 1.5em 0;
+}
+.tt-prose ul[data-type="taskList"] { list-style: none; padding-left: 0.2em; }
+.tt-prose ul[data-type="taskList"] li { display: flex; align-items: flex-start; gap: 0.6em; }
+.tt-prose ul[data-type="taskList"] li > label { margin-top: 0.35em; }
+.tt-prose ul[data-type="taskList"] input[type="checkbox"] { width: 1.05em; height: 1.05em; accent-color: var(--forest); }
+.tt-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--forest) 10%, transparent);
+  font-size: 0.95rem;
+}
+.tt-prose th {
+  background: var(--forest);
+  color: var(--cream);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.7rem 1rem;
+}
+.tt-prose td {
+  border-top: 1px solid color-mix(in srgb, var(--forest) 10%, transparent);
+  padding: 0.7rem 1rem;
+  color: color-mix(in srgb, var(--forest) 80%, transparent);
+}
+.tt-prose mark { background: var(--lime); color: var(--forest); padding: 0 0.15em; border-radius: 3px; }
+
+/* Callback (callout) block — colour set by the user to a brand colour. */
+.tt-prose .tt-callout {
+  padding: 1.1rem 1.3rem;
+  border-radius: 18px;
+  border-left: 5px solid;
+}
+.tt-prose .tt-callout__body { flex: 1 1 auto; }
+.tt-prose .tt-callout__body > * { margin: 0; }
+.tt-prose .tt-callout__body > * + * { margin-top: 0.6em; }
+.tt-callout--light-blue { background: color-mix(in srgb, var(--light-blue) 40%, white); border-left-color: var(--light-blue); }
+.tt-callout--orange     { background: color-mix(in srgb, var(--orange) 12%, white); border-left-color: var(--orange); }
+.tt-callout--forest     { background: color-mix(in srgb, var(--forest) 88%, black); border-left-color: var(--lime); color: var(--cream); }
+.tt-callout--forest p, .tt-callout--forest strong { color: var(--cream); }
+.tt-callout--cream      { background: var(--cream); border-left-color: var(--orange); }
+.tt-callout--lime       { background: color-mix(in srgb, var(--lime) 35%, white); border-left-color: var(--forest); }
+
+/* Belangrijk (Important) block — orange emphasis with a warning icon. */
+.tt-prose .tt-important {
+  display: flex;
+  gap: 0.85rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: 18px;
+  border-left: 5px solid var(--orange);
+  background: color-mix(in srgb, var(--orange) 12%, white);
+}
+.tt-prose .tt-important__icon { font-size: 1.3rem; line-height: 1.5; color: var(--orange); user-select: none; }
+.tt-prose .tt-important__body { flex: 1 1 auto; }
+.tt-prose .tt-important__body > * { margin: 0; }
+.tt-prose .tt-important__body > * + * { margin-top: 0.6em; }
+
+/* Editor surface (write mode). Uses .tt-prose for typography, adds editing chrome. */
+.tt-editor .ProseMirror { outline: none; min-height: 24rem; }
+.tt-editor .ProseMirror:focus { outline: none; }
+.tt-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: color-mix(in srgb, var(--forest) 35%, transparent);
+  pointer-events: none;
+  height: 0;
+}
+.tt-editor .ProseMirror .tt-callout,
+.tt-editor .ProseMirror .tt-important { position: relative; }
+/* Callback colour-swatch picker (editor only) */
+.tt-callout--editing { position: relative; }
+.tt-callout__picker {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.6rem;
+}
+.tt-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.tt-swatch:hover { transform: scale(1.12); }
+.tt-swatch--on { box-shadow: 0 0 0 2px white, 0 0 0 4px var(--forest); }
+.tt-editor .ProseMirror table td, .tt-editor .ProseMirror table th { position: relative; }
+.tt-editor .ProseMirror .selectedCell::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: color-mix(in srgb, var(--forest) 8%, transparent);
+  pointer-events: none;
+}
+
+/* Minimal scrollbar: only a subtle thumb, no visible track/gutter. The thumb
+   fades in on hover so idle panels look clean. */
+.nice-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.nice-scroll:hover {
+  scrollbar-color: color-mix(in srgb, var(--forest) 28%, transparent) transparent;
+}
+.nice-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.nice-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.nice-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.nice-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--forest) 25%, transparent);
+}
+.nice-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--forest) 40%, transparent);
 }

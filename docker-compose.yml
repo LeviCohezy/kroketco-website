@@ -1,0 +1,18 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      # Change this before deploying to production.
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-kroketco-dev}
+      CMS_DB_PATH: /data/cms.db
+      UPLOAD_DIR: /data/uploads
+    volumes:
+      # Named volume mounted at /data holds the SQLite db + uploaded images,
+      # so content survives container rebuilds.
+      - cms-data:/data
+    restart: unless-stopped
+
+volumes:
+  cms-data:

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Baloo_2, Inter, Oswald } from "next/font/google";
+import { Baloo_2, Caveat, Inter, Oswald } from "next/font/google";
 import "./globals.css";
 import Nav from "./_ui/Nav";
 
@@ -19,6 +19,13 @@ const oswald = Oswald({
   weight: ["600"],
   subsets: ["latin"],
   variable: "--font-oswald",
+});
+
+// Handwritten script for playful accent sub-words.
+const caveat = Caveat({
+  weight: ["700"],
+  subsets: ["latin"],
+  variable: "--font-hand",
 });
 
 export const metadata: Metadata = {
@@ -48,7 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${baloo.variable} ${inter.variable} ${oswald.variable} h-full antialiased`}
+      className={`${baloo.variable} ${inter.variable} ${oswald.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-full" suppressHydrationWarning>
         {BASE_PATH && <script dangerouslySetInnerHTML={{ __html: basePathPatch }} />}

@@ -24,9 +24,9 @@ const stats = [
 
 export default function OverOnsPage() {
   return (
-    <main className="min-h-screen bg-cream text-forest">
-      {/* 1. HERO — background video */}
-      <section className="relative h-[90vh] min-h-[560px] w-full overflow-hidden">
+    <main className="min-h-screen bg-forest text-forest">
+      {/* 1. HERO — full-bleed background video (desktop/tablet only) */}
+      <section className="relative hidden w-full overflow-hidden sm:block sm:h-[90vh] sm:min-h-[560px]">
         <video
           className="absolute inset-0 h-full w-full object-cover"
           autoPlay
@@ -38,7 +38,9 @@ export default function OverOnsPage() {
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-black/60" />
 
-        <div className="relative flex h-full flex-col justify-end">
+        {/* Overlaid title + CTA — desktop/tablet only. On mobile the video is a
+            clean 50vh and the copy lives in the beige block below. */}
+        <div className="relative hidden h-full flex-col justify-end sm:flex">
           <div className="mx-auto w-full max-w-[1480px] px-6 pb-24 sm:px-12 sm:pb-28 lg:px-16">
             {/* breadcrumb */}
             <nav className="mb-6 flex items-center gap-2 text-[13px] font-semibold text-white/75">
@@ -67,8 +69,38 @@ export default function OverOnsPage() {
         </div>
       </section>
 
-      {/* 2. ATELIER STORY — image left, text right (rounded overlap on the hero) */}
-      <section className="relative z-10 -mt-10 rounded-t-[48px] bg-white">
+      {/* 1. MOBILE HERO — 100vh dark green: square rounded video with margin,
+          title + CTA below. No overlap; the body bg is dark green so it blends. */}
+      <section className="flex h-screen min-h-[600px] flex-col bg-forest px-3 pb-10 pt-32 text-cream sm:hidden">
+        <div className="aspect-square w-full overflow-hidden rounded-[28px] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.5)]">
+          <video className="h-full w-full object-cover" autoPlay muted loop playsInline>
+            <source src="/video/atelier.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div className="mt-8 flex flex-1 flex-col justify-center px-2">
+          <nav className="mb-4 flex items-center gap-2 text-[13px] font-semibold text-cream/60">
+            <Link href="/" className="transition-opacity hover:opacity-100">Home</Link>
+            <span>–</span>
+            <span className="text-cream">Over ons</span>
+          </nav>
+          <h1
+            className="text-[clamp(2rem,9vw,3rem)] uppercase leading-[0.95] tracking-[0.01em] text-cream"
+            style={display}
+          >
+            Vers &amp; ambachtelijk lekker sinds 1996
+          </h1>
+          <a
+            href="/#contact"
+            className="mt-6 inline-block w-fit rounded-xl bg-orange px-8 py-4 text-[15px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.04]"
+          >
+            Neem contact op
+          </a>
+        </div>
+      </section>
+
+      {/* 2. ATELIER STORY — image left, text right. Flush below the 100vh hero on
+          mobile (no overlap); overlaps the hero on tablet/desktop. */}
+      <section className="relative z-10 rounded-t-[48px] bg-white sm:-mt-10">
         <div className="mx-auto max-w-[1480px] px-6 py-16 sm:px-12 sm:py-24 lg:px-16">
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
             <div className="overflow-hidden rounded-[24px] shadow-[0_20px_50px_-20px_rgba(14,75,58,0.45)]">
@@ -139,21 +171,27 @@ export default function OverOnsPage() {
         </div>
       </div>
 
-      {/* 5. MARQUEE — between the timeline and the light-blue section */}
-      <div className="overflow-hidden bg-orange py-4 text-cream sm:py-5">
-        <div className="flex w-max animate-marquee items-center" style={{ animationDuration: "26s" }}>
-          {[...Array(2)].flatMap((_, set) =>
-            ["Ambachtelijk", "Vers gedraaid", "Belgisch", "Sinds 1996", "Met de hand", "Goudbruin"].map((w) => (
-              <span
-                key={`${set}-${w}`}
-                className="flex items-center whitespace-nowrap text-[clamp(1.05rem,2.4vw,1.9rem)] font-bold uppercase tracking-[0.04em]"
-                style={display}
-              >
-                {w}
-                <span className="mx-6 text-lime sm:mx-8">✦</span>
-              </span>
-            ))
-          )}
+      {/* 5. WORD BAND — static, between the timeline and the light-blue section */}
+      <div className="bg-orange py-4 text-cream sm:py-5">
+        <div className="mx-auto flex max-w-[1480px] flex-wrap items-center justify-center gap-x-6 gap-y-2 px-6 sm:gap-x-8">
+          {["Ambachtelijk", "Vers gedraaid", "Belgisch", "Sinds 1996", "Met de hand", "Goudbruin"].map((w, i, arr) => (
+            <span
+              key={w}
+              className="flex items-center whitespace-nowrap text-[clamp(1.05rem,2.4vw,1.9rem)] font-bold uppercase tracking-[0.04em]"
+              style={display}
+            >
+              {w}
+              {i < arr.length - 1 && (
+                <span className="ml-6 flex items-center text-lime sm:ml-8" aria-hidden>
+                  <svg viewBox="0 0 24 16" fill="none" className="h-[0.7em] w-auto">
+                    <rect x="1" y="1" width="22" height="14" rx="7" fill="currentColor" opacity="0.2" />
+                    <rect x="1" y="1" width="22" height="14" rx="7" stroke="currentColor" strokeWidth="1.6" />
+                    <path d="M6 8h.01M10 9.5h.01M14 6.5h.01M18 8.5h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
+                </span>
+              )}
+            </span>
+          ))}
         </div>
       </div>
 

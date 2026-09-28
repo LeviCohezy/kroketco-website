@@ -9,23 +9,23 @@ const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }
 const LINKS = [
   { href: "/producten", label: "Producten" },
   { href: "/partners", label: "Partners" },
-  { href: "/groendaal", label: "Groendaal" },
+  { href: "/groendaal", label: "Groendal" },
   { href: "/over-ons", label: "Over ons" },
   { href: "/nieuws", label: "Nieuws" },
 ];
+const HALF = Math.ceil(LINKS.length / 2);
+const LEFT_LINKS = LINKS.slice(0, HALF);
+const RIGHT_LINKS = LINKS.slice(HALF);
 
 // The homepage hero's floating nav, extracted so it can sit fixed at the top of
 // every page (sticky across the whole scroll) instead of only inside the hero.
 export default function Nav() {
   const pathname = usePathname();
   const white = pathname === "/over-ons"; // white navbar on the About page
-  const [beige, setBeige] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
-  // reflect the saved theme on mount
-  useEffect(() => {
-    setBeige(document.documentElement.getAttribute("data-theme") === "beige");
-  }, []);
+  // The CMS back office (/admin) has its own chrome — never show the public nav.
+  const isAdmin = pathname?.startsWith("/admin");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // lock body scroll while the full-screen menu is open
   useEffect(() => {
@@ -35,52 +35,40 @@ export default function Nav() {
     };
   }, [menuOpen]);
 
-  const toggleTheme = () => {
-    setBeige((prev) => {
-      const next = !prev;
-      const root = document.documentElement;
-      if (next) root.setAttribute("data-theme", "beige");
-      else root.removeAttribute("data-theme");
-      try {
-        localStorage.setItem("theme", next ? "beige" : "white");
-      } catch {}
-      return next;
-    });
-  };
+  if (isAdmin) return null;
 
   return (
     <>
       <header className="fixed inset-x-0 top-6 z-50 px-6 sm:px-12 lg:px-16">
-        <nav className={`relative flex w-full items-center justify-between rounded-full py-3 pl-7 pr-3 text-forest shadow-[0_12px_34px_rgba(0,0,0,0.18)] ${white ? "bg-white" : "bg-light-blue"}`}>
+        <nav className={`relative flex w-full items-center justify-between rounded-full py-4 pl-8 pr-4 text-forest shadow-[0_12px_34px_rgba(0,0,0,0.18)] sm:py-5 ${white ? "bg-white" : "bg-light-blue"}`}>
+          {/* left — desktop links */}
           <div className="flex items-center gap-6">
-            <a href="/">
-              <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={2000} height={667} priority className="h-8 w-auto sm:h-9" />
-            </a>
             <div className="hidden items-center gap-6 text-[13px] font-bold uppercase tracking-[0.08em] lg:flex">
-              {LINKS.map((l) => (
+              {LEFT_LINKS.map((l) => (
                 <a key={l.href} href={l.href} className="transition-opacity hover:opacity-70">
                   {l.label}
                 </a>
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              aria-label={beige ? "Witte achtergrond" : "Beige achtergrond"}
-              title={beige ? "Naar wit" : "Naar beige"}
-              className="grid h-9 w-9 place-items-center rounded-full border border-forest/40 transition-colors hover:bg-forest/10"
-            >
-              <span
-                className="h-4 w-4 rounded-full border border-forest/40"
-                style={{ backgroundColor: beige ? "#ffffff" : "#fff3e2" }}
-              />
-            </button>
-            {/* hamburger — opens full-screen menu on mobile + tablet */}
+          {/* centered logo */}
+          <a href="/" className="absolute left-1/2 -translate-x-1/2">
+            <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={2000} height={667} priority className="h-9 w-auto sm:h-11" />
+          </a>
+          {/* right — desktop links / mobile hamburger */}
+          <div className="flex items-center gap-6">
+            <div className="hidden items-center gap-6 text-[13px] font-bold uppercase tracking-[0.08em] lg:flex">
+              {RIGHT_LINKS.map((l) => (
+                <a key={l.href} href={l.href} className="transition-opacity hover:opacity-70">
+                  {l.label}
+                </a>
+              ))}
+            </div>
+            {/* hamburger — opens full-screen menu on mobile + tablet, right side */}
             <button
               onClick={() => setMenuOpen(true)}
               aria-label="Menu openen"
-              className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] rounded-full border border-forest/40 transition-colors hover:bg-forest/10 lg:hidden"
+              className="flex h-10 w-10 flex-col items-center justify-center gap-[5px] rounded-full border border-forest/40 transition-colors hover:bg-forest/10 lg:hidden"
             >
               <span className="h-[2px] w-4 bg-forest" />
               <span className="h-[2px] w-4 bg-forest" />

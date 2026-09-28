@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+data
+.git
+.gitignore
+npm-debug.log*
+Dockerfile
+docker-compose.yml
+README-CMS.md
+.DS_Store
+*.pem
