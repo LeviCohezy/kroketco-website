@@ -15,7 +15,7 @@ export function PageNav({ active }: { active?: string }) {
     <header className="sticky top-0 z-50 w-full bg-[var(--light-blue)]/95 backdrop-blur">
       <nav className="mx-auto flex max-w-[1480px] items-center justify-between px-6 py-4 sm:px-12 lg:px-16">
         <Link href="/" className="flex items-center">
-          <img src="/hero/logo-kroketco.png" alt="Kroketco" className="h-8 w-auto sm:h-9" />
+          <img src="/hero/logo-kroketco.png" alt="Kroketco" className="h-11 w-auto sm:h-12" />
         </Link>
         <div className="hidden items-center gap-7 text-[13px] font-bold uppercase tracking-[0.08em] text-forest sm:flex">
           {LINKS.map((l) => (
@@ -77,7 +77,7 @@ export function PageFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1.1fr_1.4fr]">
           {/* brand + socials */}
           <div>
-            <img src="/hero/logo-kroketco.png" alt="Kroketco" className="h-9 w-auto brightness-0 invert" />
+            <img src="/hero/logo-kroketco.png" alt="Kroketco" className="h-16 w-auto" />
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-cream/70">
               Ambachtelijke Belgische kroketten. Vers gedraaid, met de hand gepaneerd en goudbruin
               gebakken — voor thuis, de betere traiteur en de horeca.

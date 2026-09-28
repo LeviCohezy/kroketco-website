@@ -37,10 +37,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <Image
             src="/hero/logo-kroketco.png"
             alt="Kroketco"
-            width={2000}
-            height={667}
+            width={1254}
+            height={1254}
             priority
-            className="h-8 w-auto"
+            className="h-11 w-auto"
           />
         </Link>
 
@@ -89,7 +89,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <main className="min-w-0 flex-1 sm:pl-4">
         {/* Mobile top bar with logout (sidebar is hidden on mobile) */}
         <div className="mb-3 flex items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-sm sm:hidden">
-          <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={2000} height={667} className="h-7 w-auto" />
+          <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={1254} height={1254} className="h-10 w-auto" />
           <button onClick={logout} className="text-sm font-medium text-orange">
             Uitloggen
           </button>

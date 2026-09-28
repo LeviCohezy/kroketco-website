@@ -53,7 +53,7 @@ export default function Nav() {
           </div>
           {/* centered logo */}
           <a href="/" className="absolute left-1/2 -translate-x-1/2">
-            <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={2000} height={667} priority className="h-9 w-auto sm:h-11" />
+            <Image src="/hero/logo-kroketco.png" alt="Kroketco" width={1254} height={1254} priority className="h-11 w-auto sm:h-14" />
           </a>
           {/* right — desktop links / mobile hamburger */}
           <div className="flex items-center gap-6">
@@ -88,9 +88,9 @@ export default function Nav() {
             <Image
               src="/hero/logo-kroketco.png"
               alt="Kroketco"
-              width={2000}
-              height={667}
-              className="h-8 w-auto brightness-0 invert sm:h-9"
+              width={1254}
+              height={1254}
+              className="h-11 w-auto sm:h-12"
             />
           </a>
           <button
