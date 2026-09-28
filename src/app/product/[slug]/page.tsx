@@ -64,7 +64,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           {/* image — frame + photo always square */}
           <div className="relative aspect-square overflow-hidden rounded-[32px] p-5 shadow-[0_24px_60px_rgba(14,75,58,0.18)] sm:p-8" style={{ background: p.frame }}>
-            {p.veggie && (
+            {!!p.veggie && (
               <span className="absolute left-5 top-5 z-10 rounded-full bg-lime px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.1em] text-forest">
                 Vegetarisch
               </span>
