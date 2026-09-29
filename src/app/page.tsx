@@ -281,14 +281,14 @@ export default function HomeV3() {
           <div className="flex h-full flex-col justify-center px-6 sm:px-12 lg:px-16">
             <div className="max-w-2xl">
               <h1
-                className="relative text-[clamp(3.5rem,11vw,9.5rem)] uppercase leading-[0.9] tracking-[0.01em] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)]"
+                className="relative text-[clamp(3rem,9vw,6.5rem)] uppercase leading-[0.95] tracking-[0.01em] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)]"
                 style={{ fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }}
               >
                 <span className="block">
-                  <EditableText as="span" section="home.hero" field="titleLine1" className="hero-anim hero-rise inline-block" style={{ animationDelay: "0.35s" }} />
+                  <EditableText as="span" section="home.hero" field="titleLine1" className="hero-anim hero-rise inline-block whitespace-nowrap" style={{ animationDelay: "0.35s" }} />
                 </span>
                 <span className="block">
-                  <span className="hero-anim hero-rise relative inline-block" style={{ animationDelay: "0.47s" }}>
+                  <span className="hero-anim hero-rise relative inline-block whitespace-nowrap" style={{ animationDelay: "0.47s" }}>
                     <EditableText as="span" section="home.hero" field="titleLine2" />
                     {hero.burst && (
                     <span

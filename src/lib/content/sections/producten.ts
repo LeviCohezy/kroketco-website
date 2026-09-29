@@ -86,7 +86,7 @@ export const productenSections = defineSections({
           "Betrouwbare kwaliteit, constante paneer en scherpe volumeprijzen. Wij leveren dagvers aan restaurants, brasserieën, traiteurs en cateraars in heel België — met maatwerk voor kaart, portie en verpakking.",
       },
       { key: "primaryLabel", type: "text", label: "Oranje knop — tekst", default: "Vraag horeca-prijzen" },
-      { key: "primaryHref", type: "url", label: "Oranje knop — link", default: "#" },
+      { key: "primaryHref", type: "url", label: "Oranje knop — link", default: "/#contact" },
       { key: "secondaryLabel", type: "text", label: "Tweede knop — tekst", default: "Over ons" },
       { key: "secondaryHref", type: "url", label: "Tweede knop — link", default: "/over-ons" },
       { key: "image", type: "image", label: "Afbeelding", help: "Rechts in het blok", default: "/about/horeca.png" },
