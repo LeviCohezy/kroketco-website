@@ -93,6 +93,7 @@ export function PageFooter() {
             <EditableText as="h3" section="global.footer" field="contactTitle" className="text-[15px] uppercase tracking-[0.12em] text-lime" style={OSWALD} />
             <ul className="mt-4 space-y-2.5 text-sm text-cream/75">
               {f.address && <EditableText as="li" section="global.footer" field="address" />}
+              {f.vat && <EditableText as="li" section="global.footer" field="vat" className="text-cream/55" />}
               {f.email && (
                 <li>
                   <a href={`mailto:${f.email}`} className="transition-colors hover:text-cream">

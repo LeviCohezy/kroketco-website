@@ -16,13 +16,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function GroendaalPage() {
-  const [hero, features, about, affinage, story, contact] = await Promise.all([
+  const [hero, features, about, affinage, story] = await Promise.all([
     getContent("groendaal.hero"),
     getContent("groendaal.features"),
     getContent("groendaal.about"),
     getContent("groendaal.affinage"),
     getContent("groendaal.story"),
-    getContent("groendaal.contact"),
   ]);
   const featureItems = features.items.filter((f) => f.label);
 
@@ -162,12 +161,7 @@ export default async function GroendaalPage() {
       </section>
 
       {/* 5. PARTNER WITH US */}
-      <ContactForm
-        source="samenwerking-groendal"
-        eyebrow={contact.eyebrow}
-        heading={contact.title}
-        text={contact.text}
-      />
+      <ContactForm source="samenwerking-groendal" section="groendaal.contact" />
 
       <PageFooter />
     </main>

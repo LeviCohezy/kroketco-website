@@ -118,7 +118,6 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
   const { editing } = useEditor();
   const hero = useContent("partners.hero");
   const list = useContent("partners.list");
-  const contact = useContent("partners.contact");
   const words = hero.marquee.map((m) => m.text).filter(Boolean);
   return (
     <main className="min-h-screen bg-white text-forest [font-family:var(--font-inter),sans-serif]">
@@ -248,12 +247,7 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
         </div>
       </section>
 
-      <ContactForm
-        source="partners"
-        eyebrow={contact.eyebrow}
-        heading={contact.title}
-        text={contact.text}
-      />
+      <ContactForm source="partners" section="partners.contact" />
 
       <PageFooter />
     </main>

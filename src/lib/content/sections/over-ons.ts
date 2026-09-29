@@ -120,7 +120,7 @@ export const overOnsSections = defineSections({
         label: "Tekst",
         help: "Laat een lege regel tussen twee alinea's",
         default:
-          "Wat ooit begon in een kleine keuken in Gent groeide uit tot een echt ambacht. Onze missie is simpel: de allerlekkerste ambachtelijke kroket maken en die dagelijks vers op tafel brengen — bij jou thuis, bij de traiteur en in de beste horecazaken.\n\nGeen half werk, geen kunstmatige smaakjes. Enkel eerlijke ingrediënten, met de hand gedraaid en goudbruin gebakken. Zo blijft de Belgische kroket wat ze altijd hoort te zijn: een klein stukje geluk.",
+          "Wat ooit begon in een kleine keuken in Roeselare groeide uit tot een echt ambacht. Onze missie is simpel: de allerlekkerste ambachtelijke kroket maken en die dagelijks vers op tafel brengen — bij jou thuis, bij de traiteur en in de beste horecazaken.\n\nGeen half werk, geen kunstmatige smaakjes. Enkel eerlijke ingrediënten, met de hand gedraaid en goudbruin gebakken. Zo blijft de Belgische kroket wat ze altijd hoort te zijn: een klein stukje geluk.",
       },
     ],
   },

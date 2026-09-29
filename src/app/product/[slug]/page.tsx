@@ -44,13 +44,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   const methods: PrepMethod[] = [p.preparation.oven, p.preparation.frituur].filter((m) => m.enabled && m.steps.length > 0);
 
-  const [hero, prep, ing, rel, cta, contact] = await Promise.all([
+  const [hero, prep, ing, rel, cta] = await Promise.all([
     getContent("product.hero"),
     getContent("product.bereiding"),
     getContent("product.ingredienten"),
     getContent("product.related"),
     getContent("product.cta"),
-    getContent("product.contact"),
   ]);
 
   const related = listProducts({ publishedOnly: true })
@@ -320,12 +319,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       {/* ============================ CONTACT FORM ============================ */}
       {/* Shown by default; the CMS can turn it off per product. */}
       {p.showForm ? (
-        <ContactForm
-          source={p.slug}
-          eyebrow={contact.eyebrow}
-          heading={contact.title}
-          text={contact.text}
-        />
+        <ContactForm source={p.slug} section="product.contact" />
       ) : null}
 
       <PageFooter />
