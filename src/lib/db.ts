@@ -29,6 +29,7 @@ function open(): DB {
   db.pragma("foreign_keys = ON");
   migrate(db);
   seed(db);
+  backfillProductImages(db);
   return db;
 }
 
@@ -303,10 +304,59 @@ const SEED_PRODUCTS: SeedProduct[] = [
   },
 ];
 
+// Per-product photos for the two detail-page sections: the loose croquette
+// next to "Bereiding" (prep) and the large photo next to "Ingrediënten &
+// allergenen" (allergen). Keyed by product slug; files live in public/ so they
+// ship with every deploy.
+const PREP = "/kroketten-voor-bereidingssectie";
+const INGR = "/products/ingredienten";
+const PRODUCT_SECTION_IMAGES: Record<string, { prep: string; allergen: string }> = {
+  "kaaskroket": { prep: `${PREP}/kaas.png`, allergen: `${INGR}/kaaskroket.webp` },
+  "groendal-kaaskroket": { prep: `${PREP}/kaas.png`, allergen: `${INGR}/groendal-kaaskroket.webp` },
+  "garnaalkroket": { prep: `${PREP}/garnaal.png`, allergen: `${INGR}/garnaalkroket.webp` },
+  "superano-hamkroket": { prep: `${PREP}/vlees.png`, allergen: `${INGR}/superano-hamkroket.webp` },
+  "aardappelkroket": { prep: `${PREP}/aardappel-1.png`, allergen: `${INGR}/aardappelkroket.webp` },
+  "aardappelkroket-geel-gepaneerd": { prep: `${PREP}/aardappel-2.png`, allergen: `${INGR}/aardappelkroket-geel-gepaneerd.webp` },
+  // Same product under its seed name ("Aardappelkroket (blok)").
+  "aardappelkroket-blok": { prep: `${PREP}/aardappel-2.png`, allergen: `${INGR}/aardappelkroket-geel-gepaneerd.webp` },
+  "aardappelkroket-licht-gepaneerd": { prep: `${PREP}/aardappel-3.png`, allergen: `${INGR}/aardappelkroket-licht-gepaneerd.webp` },
+  "mini-kaaskroket": { prep: `${PREP}/mini-kaas.png`, allergen: `${INGR}/mini-kaaskroket.webp` },
+  "mini-garnaalkroket": { prep: `${PREP}/mini-garnaal.png`, allergen: `${INGR}/mini-garnaalkroket.webp` },
+  "mini-aardappelkroketjes": { prep: `${PREP}/mini-mix.png`, allergen: `${INGR}/mini-aardappelkroketjes.webp` },
+  "aardappelpuree": { prep: "/products/aardappelpuree.jpg", allergen: `${INGR}/aardappelpuree.webp` },
+};
+
+// Give existing databases the section photos too. Only fills what is missing:
+// an empty field, or an /api/uploads/ photo whose file no longer exists (e.g.
+// the uploads folder was lost in a redeploy). Anything the client set in the
+// CMS is left alone.
+function backfillProductImages(db: DB) {
+  const uploadDir = process.env.UPLOAD_DIR || path.join(process.cwd(), "data", "uploads");
+  const missing = (v: string) => {
+    if (!v) return true;
+    const m = /^\/api\/uploads\/([^/]+)$/.exec(v);
+    return !!m && !fs.existsSync(/*turbopackIgnore: true*/ path.join(uploadDir, m[1]));
+  };
+  const rows = db.prepare("SELECT id, slug, prep_image, allergen_image FROM products").all() as {
+    id: number;
+    slug: string;
+    prep_image: string;
+    allergen_image: string;
+  }[];
+  const update = db.prepare("UPDATE products SET prep_image = ?, allergen_image = ? WHERE id = ?");
+  for (const r of rows) {
+    const img = PRODUCT_SECTION_IMAGES[r.slug];
+    if (!img) continue;
+    const prep = missing(r.prep_image) ? img.prep : r.prep_image;
+    const allergen = missing(r.allergen_image) ? img.allergen : r.allergen_image;
+    if (prep !== r.prep_image || allergen !== r.allergen_image) update.run(prep, allergen, r.id);
+  }
+}
+
 function seedProducts(db: DB) {
   const insert = db.prepare(`
-    INSERT INTO products (slug, name, title, category, sub, description, image, allergens, frame, veggie, price, tags, cards, ingredients, preparation, sort_order)
-    VALUES (@slug, @name, @title, @category, @sub, @description, @image, @allergens, @frame, @veggie, @price, @tags, @cards, @ingredients, @preparation, @sort_order)
+    INSERT INTO products (slug, name, title, category, sub, description, image, prep_image, allergen_image, allergens, frame, veggie, price, tags, cards, ingredients, preparation, sort_order)
+    VALUES (@slug, @name, @title, @category, @sub, @description, @image, @prep_image, @allergen_image, @allergens, @frame, @veggie, @price, @tags, @cards, @ingredients, @preparation, @sort_order)
   `);
   const tx = db.transaction((rows: SeedProduct[]) => {
     rows.forEach((p, i) => {
@@ -314,14 +364,17 @@ function seedProducts(db: DB) {
         oven: { enabled: !!p.oven, temp: p.oven?.temp ?? "", time: p.oven?.time ?? "", steps: p.oven?.steps ?? [] },
         frituur: { enabled: !!p.frituur, temp: p.frituur?.temp ?? "", time: p.frituur?.time ?? "", steps: p.frituur?.steps ?? [] },
       };
+      const slug = slugify(p.name);
       insert.run({
-        slug: slugify(p.name),
+        slug,
         name: p.name,
         title: p.title,
         category: p.category,
         sub: p.sub,
         description: p.description,
         image: p.src,
+        prep_image: PRODUCT_SECTION_IMAGES[slug]?.prep ?? "",
+        allergen_image: PRODUCT_SECTION_IMAGES[slug]?.allergen ?? "",
         allergens: p.allergens.join(","),
         frame: p.frame,
         veggie: p.veggie ? 1 : 0,

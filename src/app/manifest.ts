@@ -1,0 +1,19 @@
+import type { MetadataRoute } from "next";
+
+// Web app manifest — name + home-screen icons (the round KROKETCO badge).
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "Kroketco Belgium",
+    short_name: "Kroketco",
+    description: "Ambachtelijke Belgische kroketten. Vers gedraaid, goudbruin gebakken.",
+    start_url: "/",
+    display: "standalone",
+    background_color: "#ffffff",
+    theme_color: "#0e4b3a",
+    icons: [
+      { src: "/pwa/icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "/pwa/icon-512.png", sizes: "512x512", type: "image/png" },
+      { src: "/pwa/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+    ],
+  };
+}
