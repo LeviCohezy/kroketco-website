@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Baloo_2, Caveat, Inter, Oswald } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Nav from "./_ui/Nav";
 import { ContentProvider } from "./_ui/ContentProvider";
@@ -54,6 +55,9 @@ try{pp(HTMLVideoElement.prototype,'poster');}catch(e){}
 var o=Element.prototype.setAttribute;Element.prototype.setAttribute=function(a,v){if(typeof v==='string'){var l=(''+a).toLowerCase();if(l==='src'||l==='poster'||l==='href')v=u(v);else if(l==='srcset')v=ss(v);}return o.call(this,a,v);};
 })();`;
 
+// Google Tag Manager container.
+const GTM_ID = "GTM-NGMNBVTW";
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const content = await getAllContent();
   const isAdmin = await isAuthenticated();
@@ -64,6 +68,23 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${baloo.variable} ${inter.variable} ${oswald.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-full" suppressHydrationWarning>
+        {/* Google Tag Manager (noscript) — must be the first thing in <body>. */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+        {/* Google Tag Manager — loaded by Next after hydration. */}
+        <Script id="gtm" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');`}
+        </Script>
         {BASE_PATH && <script dangerouslySetInnerHTML={{ __html: basePathPatch }} />}
         <script
           dangerouslySetInnerHTML={{
