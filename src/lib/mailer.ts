@@ -89,3 +89,48 @@ export async function sendContactNotification(req: ContactRequest): Promise<bool
     return false;
   }
 }
+
+// Password-reset e-mail for the admin. Goes to RESET_TO (default
+// info@kroketco.be). Returns false when SMTP isn't configured or sending fails;
+// never throws.
+export async function sendPasswordResetEmail(opts: { link: string; ip: string; at: Date }): Promise<boolean> {
+  const cfg = smtpConfig();
+  const to = process.env.RESET_TO || "info@kroketco.be";
+  const when = opts.at.toLocaleString("nl-BE", { timeZone: "Europe/Brussels", dateStyle: "long", timeStyle: "medium" });
+  if (!cfg) {
+    console.warn("[mailer] SMTP not configured — password reset e-mail not sent.");
+    // Local development only: print the link so the flow can still be tested.
+    if (process.env.NODE_ENV !== "production") console.warn(`[mailer] Reset link (dev): ${opts.link}`);
+    return false;
+  }
+  try {
+    const transporter = nodemailer.createTransport({ host: cfg.host, port: cfg.port, secure: cfg.secure, auth: cfg.auth });
+    await transporter.sendMail({
+      from: cfg.from,
+      to,
+      subject: "Kroketco — wachtwoord resetten",
+      text: [
+        "Er is gevraagd om het admin-wachtwoord van kroketco.be te resetten.",
+        "",
+        `Tijdstip: ${when}`,
+        `IP-adres: ${opts.ip}`,
+        "",
+        "Kies een nieuw wachtwoord via deze link (15 minuten geldig, één keer bruikbaar):",
+        opts.link,
+        "",
+        "Heb je dit niet zelf aangevraagd? Negeer deze e-mail — het huidige wachtwoord blijft gewoon werken.",
+      ].join("\n"),
+      html: `
+        <h2 style="margin:0 0 12px">Wachtwoord resetten</h2>
+        <p>Er is gevraagd om het admin-wachtwoord van kroketco.be te resetten.</p>
+        <p><strong>Tijdstip:</strong> ${escapeHtml(when)}<br/><strong>IP-adres:</strong> ${escapeHtml(opts.ip)}</p>
+        <p><a href="${escapeHtml(opts.link)}" style="display:inline-block;background:#ff8a00;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">Kies een nieuw wachtwoord</a></p>
+        <p style="color:#666;font-size:13px">De link is 15 minuten geldig en werkt één keer.<br/>Niet zelf aangevraagd? Negeer deze e-mail — het huidige wachtwoord blijft gewoon werken.</p>
+      `,
+    });
+    return true;
+  } catch (err) {
+    console.error("[mailer] Failed to send password reset e-mail:", err);
+    return false;
+  }
+}

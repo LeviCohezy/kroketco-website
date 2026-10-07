@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -63,6 +64,9 @@ export default function LoginAdminPage() {
         >
           {busy ? "Bezig…" : "Inloggen"}
         </button>
+        <Link href="/login-admin/vergeten" className="mt-4 block text-center text-sm font-medium text-forest/60 hover:text-orange">
+          Wachtwoord vergeten?
+        </Link>
       </form>
     </div>
   );

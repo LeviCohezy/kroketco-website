@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminPassword, signSession, SESSION_COOKIE, sessionCookieOptions } from "@/lib/auth";
+import { checkPassword, signSession, SESSION_COOKIE, sessionCookieOptions } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   }
   const password = typeof body === "object" && body !== null ? (body as Record<string, unknown>).password : undefined;
 
-  if (typeof password !== "string" || password !== adminPassword()) {
+  if (typeof password !== "string" || !checkPassword(password)) {
     return NextResponse.json({ error: "Verkeerd wachtwoord" }, { status: 401 });
   }
 

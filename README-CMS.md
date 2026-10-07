@@ -26,7 +26,7 @@ npm run dev
 
 - Site: <http://localhost:3000>
 - Admin: <http://localhost:3000/admin> → redirects to `/admin/login`
-- Default password: `kroketco-dev` (override with the `ADMIN_PASSWORD` env var)
+- Password: `ADMIN_PASSWORD` from `.env` (copy `.env.example`); falls back to `kroketco-dev` if unset
 
 On first run the DB is created at `./data/cms.db` and seeded with the existing
 products and news items. `./data/` is gitignored.
@@ -50,6 +50,8 @@ ADMIN_PASSWORD=your-strong-password docker compose up --build
 | Variable         | Default            | Purpose                                        |
 | ---------------- | ------------------ | ---------------------------------------------- |
 | `ADMIN_PASSWORD` | `kroketco-dev`     | Single-admin login password. **Set this in prod.** |
+| `SITE_URL`       | request origin     | Public site URL, used in the password-reset link. |
+| `RESET_TO`       | `info@kroketco.be` | Where the password-reset link is e-mailed (needs the `SMTP_*` vars). |
 | `CMS_DB_PATH`    | `./data/cms.db`    | SQLite file path (`/data/cms.db` in Docker).   |
 | `UPLOAD_DIR`     | `./data/uploads`   | Where uploaded images are written.             |
 | `PORT`           | `3000`             | Server port (standalone).                      |
@@ -62,6 +64,15 @@ successor to `middleware.ts`) guards `/admin/**` (redirect to login) and all
 mutating `/api/{products,blog}` calls (401). Changing `ADMIN_PASSWORD`
 invalidates existing sessions. Log out via the sidebar.
 
+
+### Wachtwoord vergeten
+
+`/login-admin` → "Wachtwoord vergeten?" → "Stuur resetlink" e-mails a one-time
+link to `RESET_TO` (with time + IP of the request). The link is valid for 15
+minutes, works once, and lets you choose a new password (min. 8 characters).
+The new password is stored as a scrypt hash in the DB (`admin_settings`) and
+signs everyone out. Setting a *different* `ADMIN_PASSWORD` on the host later
+replaces it again. At most one reset e-mail per minute.
 ## Images
 
 Image fields accept a path/URL (e.g. `/kroketten/prod-kaas.jpg`) **or** you can

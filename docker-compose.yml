@@ -8,6 +8,15 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-kroketco-dev}
       CMS_DB_PATH: /data/cms.db
       UPLOAD_DIR: /data/uploads
+      # Optional — e-mail (contact forms + password reset). Read from .env.
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      CONTACT_TO: ${CONTACT_TO:-}
+      RESET_TO: ${RESET_TO:-}
+      SITE_URL: ${SITE_URL:-}
     volumes:
       # Named volume mounted at /data holds the SQLite db + uploaded images,
       # so content survives container rebuilds.

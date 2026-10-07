@@ -98,6 +98,22 @@ function migrate(db: DB) {
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    -- Admin password set via the reset flow (scrypt hash) + reset tokens.
+    CREATE TABLE IF NOT EXISTS admin_settings (
+      key        TEXT PRIMARY KEY,
+      value      TEXT NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS password_resets (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      token_hash TEXT NOT NULL UNIQUE,
+      ip         TEXT NOT NULL DEFAULT '',
+      created_at INTEGER NOT NULL,
+      expires_at INTEGER NOT NULL,
+      used_at    INTEGER
+    );
+
     CREATE TABLE IF NOT EXISTS partners (
       id          INTEGER PRIMARY KEY AUTOINCREMENT,
       slug        TEXT NOT NULL UNIQUE,
