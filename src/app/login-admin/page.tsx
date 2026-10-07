@@ -28,7 +28,9 @@ export default function LoginAdminPage() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Inloggen mislukt");
       }
-      const next = params.get("next") || "/";
+      // Only follow same-site paths (no "//evil.com" or absolute URLs).
+      const raw = params.get("next") || "/";
+      const next = raw.startsWith("/") && !raw.startsWith("//") && !raw.startsWith("/\\") ? raw : "/";
       router.push(next);
       router.refresh();
     } catch (err) {
