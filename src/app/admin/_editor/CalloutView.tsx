@@ -8,9 +8,9 @@ import { Callout, CALLOUT_COLORS, type CalloutColor } from "./callout";
 const SWATCHES: { color: CalloutColor; label: string; css: string }[] = [
   { color: "light-blue", label: "Blauw", css: "var(--light-blue)" },
   { color: "orange", label: "Oranje", css: "var(--orange)" },
-  { color: "forest", label: "Groen", css: "var(--forest)" },
-  { color: "cream", label: "Crème", css: "var(--cream)" },
-  { color: "lime", label: "Lime", css: "var(--lime)" },
+  { color: "forest", label: "Donker", css: "var(--forest)" },
+  { color: "cream", label: "Wit", css: "var(--cream)" },
+  { color: "lime", label: "Lichtblauw", css: "var(--light-blue)" },
 ];
 
 function CalloutComponent({ node, updateAttributes }: NodeViewProps) {

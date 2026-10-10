@@ -31,7 +31,7 @@ function Burst({ label }: { label: string }) {
   }
   return (
     <svg viewBox="0 0 100 100" className="h-full w-full">
-      <polygon points={pts.join(" ")} fill="#ffffff" stroke="#ff8a00" strokeWidth="2.5" strokeLinejoin="round" />
+      <polygon points={pts.join(" ")} className="fill-white stroke-orange" strokeWidth="2.5" strokeLinejoin="round" />
       <text x="50" y="50" textAnchor="middle" dominantBaseline="central" className="fill-orange" style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 800, fontSize: "17px", letterSpacing: "0.02em" }}>
         {label}
       </text>
@@ -44,13 +44,13 @@ function Burst({ label }: { label: string }) {
 // around the small video stage (never behind it), popping in one-by-one on scroll.
 // Styling is per position; the logos themselves come from the CMS (home.partners).
 const BADGE_STYLES = [
-  { ring: "#d22026", fill: "#fbe5e4", pad: "20%", top: "16%", left: "9%", rot: -8, scale: 1, delay: 300 },
-  { ring: "#00694f", fill: "#e7f2ec", pad: "16%", top: "45%", left: "6%", rot: 7, scale: 0.95, delay: 120 },
-  { ring: "#3e6be6", fill: "#e8eefb", pad: "14%", top: "76%", left: "13%", rot: 5, scale: 0.9, delay: 540 },
-  { ring: "#075185", fill: "#e6eff6", pad: "13%", top: "17%", left: "89%", rot: 6, scale: 0.88, delay: 0 },
-  { ring: "#0e4b3a", fill: "#e9f2ec", pad: "12%", top: "46%", left: "92%", rot: -5, scale: 1.1, delay: 380 },
-  { ring: "#c7e36a", fill: "#0e4b3a", pad: "13%", top: "73%", left: "86%", rot: -9, scale: 1.02, delay: 660 },
-  { ring: "#4bad43", fill: "#ecf6e9", pad: "13%", top: "88%", left: "49%", rot: -6, scale: 0.98, delay: 210 },
+  { ring: "var(--pbadge-ring-1, #d22026)", fill: "var(--pbadge-fill-1, #fbe5e4)", pad: "20%", top: "16%", left: "9%", rot: -8, scale: 1, delay: 300 },
+  { ring: "var(--pbadge-ring-2, #00694f)", fill: "var(--pbadge-fill-2, #e7f2ec)", pad: "16%", top: "45%", left: "6%", rot: 7, scale: 0.95, delay: 120 },
+  { ring: "var(--pbadge-ring-3, #3e6be6)", fill: "var(--pbadge-fill-3, #e8eefb)", pad: "14%", top: "76%", left: "13%", rot: 5, scale: 0.9, delay: 540 },
+  { ring: "var(--pbadge-ring-4, #075185)", fill: "var(--pbadge-fill-4, #e6eff6)", pad: "13%", top: "17%", left: "89%", rot: 6, scale: 0.88, delay: 0 },
+  { ring: "var(--pbadge-ring-5, #0e4b3a)", fill: "var(--pbadge-fill-5, #e9f2ec)", pad: "12%", top: "46%", left: "92%", rot: -5, scale: 1.1, delay: 380 },
+  { ring: "var(--pbadge-ring-6, #c7e36a)", fill: "var(--pbadge-fill-6, #0e4b3a)", pad: "13%", top: "73%", left: "86%", rot: -9, scale: 1.02, delay: 660 },
+  { ring: "var(--pbadge-ring-7, #4bad43)", fill: "var(--pbadge-fill-7, #ecf6e9)", pad: "13%", top: "88%", left: "49%", rot: -6, scale: 0.98, delay: 210 },
 ];
 
 // Sticker placement over the big photo, per position (images from home.photo).
@@ -425,7 +425,7 @@ export default function HomeV3() {
                 {p.href && (
                 <a
                   href={p.href}
-                  className="rounded-lg bg-orange px-6 py-4 text-center text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.02]"
+                  className="kc-card-btn rounded-lg bg-orange px-6 py-4 text-center text-sm font-bold uppercase tracking-[0.08em] text-cream transition-transform hover:scale-[1.02]"
                 >
                   <EditableText as="span" section="home.products" field="buttonLabel" />
                 </a>

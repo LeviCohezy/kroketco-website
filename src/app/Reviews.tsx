@@ -31,7 +31,7 @@ const REVIEWS: Review[] = [
       "Voor onze events zijn deze kroketten een vaste waarde. Constante kwaliteit, ambachtelijk en altijd op tijd geleverd. Een echte aanrader.",
     tag: "Traiteur",
     rating: "★ 4,9",
-    color: "#a88be0",
+    color: "var(--rv-1, #a88be0)",
     photo: "/ugc/ugc-2.png",
   },
   {
@@ -51,7 +51,7 @@ const REVIEWS: Review[] = [
       "Ambachtelijk werk dat je proeft. De garnaalkroket is subliem en de service is onberispelijk. Wij bestellen elke week opnieuw.",
     tag: "Horeca",
     rating: "★ 5,0",
-    color: "#ff8d8d",
+    color: "var(--rv-2, #ff8d8d)",
     photo: "/ugc/ugc-4.png",
   },
   {
@@ -61,7 +61,7 @@ const REVIEWS: Review[] = [
       "Al onze bruiloften starten met deze kroketten als hapje. Gasten zijn steevast onder de indruk. Belgisch vakmanschap op zijn best.",
     tag: "Traiteur",
     rating: "★ 4,9",
-    color: "#f2c14e",
+    color: "var(--rv-3, #f2c14e)",
     photo: "/ugc/ugc-5.png",
   },
 ];

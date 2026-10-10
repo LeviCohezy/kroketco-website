@@ -26,7 +26,7 @@ function Burst({ label }: { label: string }) {
   }
   return (
     <svg viewBox="0 0 100 100" className="h-full w-full">
-      <polygon points={pts.join(" ")} fill="#ffffff" stroke="#ff8a00" strokeWidth="2.5" strokeLinejoin="round" />
+      <polygon points={pts.join(" ")} className="fill-white stroke-orange" strokeWidth="2.5" strokeLinejoin="round" />
       <text x="50" y="50" textAnchor="middle" dominantBaseline="central" className="fill-orange" style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 800, fontSize: "17px", letterSpacing: "0.02em" }}>
         {label}
       </text>

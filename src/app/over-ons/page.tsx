@@ -130,7 +130,7 @@ export default async function OverOnsPage() {
                 as="span"
                 section="over-ons.atelier"
                 field="eyebrow"
-                className="inline-block rounded-full bg-lime px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.14em] text-forest"
+                className="kc-tag inline-block rounded-full bg-lime px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.14em] text-forest"
               />
               <EditableText
                 as="h2"
@@ -147,7 +147,7 @@ export default async function OverOnsPage() {
                   section="over-ons.atelier"
                   labelField="ctaLabel"
                   hrefField="ctaHref"
-                  className="mt-8 inline-block rounded-xl bg-orange px-8 py-4 text-[15px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.04]"
+                  className="kc-tag-btn mt-8 inline-block rounded-xl bg-orange px-8 py-4 text-[15px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.04]"
                 />
               )}
             </div>

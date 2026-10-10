@@ -20,17 +20,17 @@ export type PartnerCard = {
 // Rule: the top background is never the same colour as the marquee band.
 const HEX: Record<string, string> = {
   wit: "#ffffff",
-  "light-blue": "#bfe6ff",
-  lime: "#c7e36a",
-  forest: "#0e4b3a",
-  oranje: "#ff8a00",
+  "light-blue": "var(--light-blue)",
+  lime: "var(--lime)",
+  forest: "var(--forest)",
+  oranje: "var(--orange)",
 };
 const INK: Record<string, string> = {
-  forest: "#fff3e2",
+  forest: "var(--cream)",
   oranje: "#ffffff",
-  "light-blue": "#0e4b3a",
-  lime: "#0e4b3a",
-  wit: "#0e4b3a",
+  "light-blue": "var(--forest)",
+  lime: "var(--forest)",
+  wit: "var(--forest)",
 };
 const TOPS = ["wit", "light-blue", "lime"];
 const SECTIONS = ["wit", "light-blue", "lime"];
@@ -126,7 +126,7 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
         <div className="mx-auto max-w-[1480px] px-6 pb-12 pt-28 sm:px-12 sm:pb-16 sm:pt-36 lg:px-16">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="max-w-3xl text-[clamp(2.4rem,7vw,6rem)] uppercase leading-[0.9] tracking-[0.01em]" style={OSWALD}>
+              <h1 className="kc-partners-title max-w-3xl text-[clamp(2.4rem,7vw,6rem)] uppercase leading-[0.9] tracking-[0.01em]" style={OSWALD}>
                 <EditableText as="span" section="partners.hero" field="titleLine1" />
                 <br />
                 <EditableText as="span" section="partners.hero" field="titleLine2" />

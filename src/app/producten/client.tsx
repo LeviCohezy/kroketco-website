@@ -131,7 +131,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
   }, []);
 
   return (
-    <main className="min-h-screen bg-white text-forest">
+    <main className="kc-producten min-h-screen bg-white text-forest">
 
       {/* 1. Hero — full video from the start (2/3 height, bottom cropped) */}
       <section className="relative h-[67vh] min-h-[440px] overflow-hidden bg-forest">
@@ -268,7 +268,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                       as="span"
                       section="producten.grid"
                       field="veggieBadge"
-                      className="absolute left-3 top-3 rounded-full bg-lime px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-forest shadow-sm"
+                      className="kc-veggie absolute left-3 top-3 rounded-full bg-lime px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-forest shadow-sm"
                     />
                   )}
                 </div>
@@ -281,7 +281,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
                   )}
                   <Link
                     href={`/product/${p.slug}`}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-forest px-5 py-3.5 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.02]"
+                    className="kc-card-btn flex w-full items-center justify-center gap-1.5 rounded-lg bg-forest px-5 py-3.5 text-[13px] font-bold uppercase tracking-[0.06em] text-cream transition-transform hover:scale-[1.02]"
                   >
                     <EditableText as="span" section="producten.grid" field="moreInfo" /> <ArrowRight />
                   </Link>
@@ -305,7 +305,7 @@ export default function AssortimentView({ products }: { products: Product[] }) {
       </section>
 
       {/* 4. Voor de horeca band */}
-      <section className="px-6 pb-16 sm:px-12 sm:pb-24 lg:px-16">
+      <section className="kc-groothandel px-6 pb-16 sm:px-12 sm:pb-24 lg:px-16">
         <div className="mx-auto max-w-[1480px]">
           <div className="grid items-center gap-8 overflow-hidden rounded-[24px] bg-forest px-8 py-12 text-cream shadow-[0_20px_50px_rgba(0,0,0,0.2)] sm:px-12 sm:py-16 lg:grid-cols-[1.3fr_1fr] lg:gap-12">
             <div>

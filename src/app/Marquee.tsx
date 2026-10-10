@@ -5,7 +5,7 @@ import { useContent, useEditor } from "@/app/_ui/ContentProvider";
 import { EditableText, EditableImage } from "@/app/_ui/edit/Editable";
 
 // Frame/label colour per card position (content lives in the CMS: home.marquee).
-const COLORS = ["#ff8a00", "#f2c14e", "#3e6be6", "#ff8a00", "#0e4b3a", "#f4a7c3", "#a88be0", "#e95454"];
+const COLORS = ["var(--mq-1, #ff8a00)", "var(--mq-2, #f2c14e)", "var(--mq-3, #3e6be6)", "var(--mq-4, #ff8a00)", "var(--mq-5, #0e4b3a)", "var(--mq-6, #f4a7c3)", "var(--mq-7, #a88be0)", "var(--mq-8, #e95454)"];
 
 export default function Marquee() {
   const { cards } = useContent("home.marquee");

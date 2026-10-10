@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Baloo_2, Caveat, Inter, Oswald } from "next/font/google";
+import { Inter, Oswald } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import Nav from "./_ui/Nav";
@@ -8,29 +8,17 @@ import EditToolbar from "./_ui/edit/EditToolbar";
 import { getAllContent, getContent } from "@/lib/content/store";
 import { isAuthenticated } from "@/lib/auth";
 
-// Rounded, chunky display face for the Kroketco brand voice.
-const baloo = Baloo_2({
-  variable: "--font-baloo",
-  subsets: ["latin"],
-});
-
+// Brandbook 2026: two fonts. Inter for running text, Oswald SemiBold for
+// titles & hooks (always capitals — see globals.css).
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
 
-// Condensed display face for the poster-style hero headline.
 const oswald = Oswald({
   weight: ["600"],
   subsets: ["latin"],
   variable: "--font-oswald",
-});
-
-// Handwritten script for playful accent sub-words.
-const caveat = Caveat({
-  weight: ["700"],
-  subsets: ["latin"],
-  variable: "--font-hand",
 });
 
 // Title + description are editable in /admin (Algemeen → Zoekmachines & tabblad).
@@ -62,11 +50,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const content = await getAllContent();
   const isAdmin = await isAuthenticated();
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${baloo.variable} ${inter.variable} ${oswald.variable} ${caveat.variable} h-full antialiased`}
-    >
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${oswald.variable} h-full antialiased`}>
       <body className="min-h-full" suppressHydrationWarning>
         {/* Google Tag Manager (noscript) — must be the first thing in <body>. */}
         <noscript>
@@ -86,12 +70,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','${GTM_ID}');`}
         </Script>
         {BASE_PATH && <script dangerouslySetInnerHTML={{ __html: basePathPatch }} />}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "try{if(localStorage.getItem('theme')==='beige')document.documentElement.setAttribute('data-theme','beige')}catch(e){}",
-          }}
-        />
         <ContentProvider value={content} isAdmin={isAdmin}>
           <Nav />
           {children}

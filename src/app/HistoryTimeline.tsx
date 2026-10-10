@@ -81,7 +81,7 @@ export default function HistoryTimeline() {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 rounded-t-none bg-forest text-cream shadow-[0_-30px_60px_rgba(0,0,0,0.35)] lg:rounded-t-[44px]"
+      className="history-band relative z-10 rounded-t-none bg-forest text-cream shadow-[0_-30px_60px_rgba(0,0,0,0.35)] lg:rounded-t-[44px]"
       style={{ height: `${n * 60}vh` }}
     >
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden py-14">
@@ -161,7 +161,7 @@ export default function HistoryTimeline() {
                   listField="entries"
                   index={i}
                   itemKey="year"
-                  className="block leading-none text-cream"
+                  className="kc-year block leading-none text-cream"
                   style={{ ...OSWALD, fontSize: "clamp(72px, 12.5vw, 184px)" }}
                 />
                 <span className="mt-3 whitespace-nowrap rounded-full bg-lime px-6 py-2.5 text-[12px] font-bold uppercase tracking-[0.08em] text-forest sm:mt-5 sm:text-[14px]">

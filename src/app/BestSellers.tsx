@@ -18,7 +18,7 @@ export default function BestSellers({ squareBottom = false }: { squareBottom?: b
                 <img
                   src={f.icon}
                   alt=""
-                  className="h-[72px] w-auto object-contain"
+                  className="feature-icon h-[72px] w-auto object-contain"
                 />
                 <span className="max-w-[8.5rem] text-[15px] font-extrabold leading-[1.15] text-forest">
                   {f.label}
@@ -42,7 +42,7 @@ export default function BestSellers({ squareBottom = false }: { squareBottom?: b
                   listField="items"
                   index={i}
                   itemKey="icon"
-                  className="h-[clamp(64px,6.5vw,98px)] w-auto object-contain"
+                  className="feature-icon h-[clamp(64px,6.5vw,98px)] w-auto object-contain"
                 />
               </span>
               <EditableText

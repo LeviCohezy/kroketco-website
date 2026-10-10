@@ -13,7 +13,7 @@ export default function PromoBanner() {
           className="relative overflow-hidden rounded-[36px] shadow-[0_40px_80px_-40px_rgba(14,75,58,0.45)]"
           style={{
             background:
-              "linear-gradient(135deg, #dcefb8 0%, #e7f4c6 55%, #d6ebac 100%)",
+              "var(--promo-bg, linear-gradient(135deg, #dcefb8 0%, #e7f4c6 55%, #d6ebac 100%))",
           }}
         >
           {/* soft decorative glow */}

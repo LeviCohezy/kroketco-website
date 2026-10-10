@@ -1,21 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  /* Kroketco Belgium brand palette */
-  --light-blue: #bfe6ff;
-  --orange: #ff8a00;
-  --forest: #0e4b3a;
-  --cream: #fff3e2;
-  --lime: #c7e36a;
+  /* Kroketco brand palette — Brandbook 2026 (public/Kroketco-brandbook.pdf).
+     Oranje & lichtblauw dragen het merk, donker voor tekst en logo, geen groen.
+     The token names (--forest, --cream, --lime) predate the brandbook and are
+     kept so the CMS data + hundreds of utility classes keep working:
+       --forest = "donker" (ink), --cream = wit, --lime = accent (orange). */
+  --light-blue: #b5e3fc;
+  --orange: #fd6c0d;
+  --forest: #1c1c1c;
+  --cream: #ffffff;
+  --lime: var(--orange);
+  --surface: #ffffff;
 
-  /* Playful UGC card frame colors (brand core + accent extras) */
-  --frame-lime: #c7e36a;
-  --frame-pink: #f4a7c3;
-  --frame-purple: #a88be0;
-  --frame-orange: #ff8a00;
-  --frame-gold: #f2c14e;
-  --frame-blue: #3e6be6;
-  --frame-green: #0e4b3a;
+  /* Product card frames (CMS stores var(--frame-*) per product): only
+     orange / blue / dark. */
+  --frame-lime: #b5e3fc;
+  --frame-pink: #b5e3fc;
+  --frame-purple: #1c1c1c;
+  --frame-orange: #fd6c0d;
+  --frame-gold: #fd6c0d;
+  --frame-blue: #b5e3fc;
+  --frame-green: #1c1c1c;
+
+  /* Component accents (read with a fallback in the components) */
+  --kc-golden: #fd6c0d;                 /* ScatterStatement highlight */
+  --promo-bg: #b5e3fc;                  /* PromoBanner background */
+  --rv-1: #fd6c0d; --rv-2: #1c1c1c; --rv-3: #b5e3fc; /* review cards */
+  --mq-1: #fd6c0d; --mq-2: #1c1c1c; --mq-3: #fd6c0d; --mq-4: #1c1c1c;
+  --mq-5: #fd6c0d; --mq-6: #1c1c1c; --mq-7: #fd6c0d; --mq-8: #1c1c1c; /* UGC marquee frames */
+  --pbadge-ring-1: #fd6c0d; --pbadge-fill-1: #ffffff;
+  --pbadge-ring-2: #1c1c1c; --pbadge-fill-2: #b5e3fc;
+  --pbadge-ring-3: #b5e3fc; --pbadge-fill-3: #ffffff;
+  --pbadge-ring-4: #fd6c0d; --pbadge-fill-4: #ffffff;
+  --pbadge-ring-5: #1c1c1c; --pbadge-fill-5: #ffffff;
+  --pbadge-ring-6: #fd6c0d; --pbadge-fill-6: #1c1c1c;
+  --pbadge-ring-7: #1c1c1c; --pbadge-fill-7: #b5e3fc; /* partner logo badges */
 }
 
 @theme inline {
@@ -33,7 +53,7 @@
   --color-frame-blue: var(--frame-blue);
   --color-frame-green: var(--frame-green);
 
-  --font-display: var(--font-baloo);
+  --font-display: var(--font-oswald);
   --font-sans: var(--font-inter);
 }
 
@@ -41,7 +61,17 @@ body {
   background: var(--light-blue);
   color: var(--forest);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  line-height: 1.5;
 }
+
+/* Brandbook typography: titles & hooks in Oswald SemiBold, always capitals;
+   running text stays Inter. (.font-hand is the old script accent — now Oswald.) */
+:is(h1, h2, h3, .font-display, .font-hand) {
+  font-family: var(--font-oswald), sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+:is(h1, h2, h3) { letter-spacing: 0.01em; }
 
 /* Tailwind v4's reset drops the pointer cursor on buttons. Restore it for any
    enabled clickable element so actionable controls feel clickable. */
@@ -55,15 +85,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Handwritten script accent (Caveat). */
-.font-hand {
-  font-family: var(--font-hand), "Segoe Script", cursive;
-}
-
-/* Accessibility: a clear keyboard-focus indicator in the brand lime. Only shows
+/* Accessibility: a clear keyboard-focus indicator in brand orange. Only shows
    for keyboard/AT navigation (:focus-visible), not on mouse clicks. */
 :focus-visible {
-  outline: 2px solid var(--lime);
+  outline: 2px solid var(--orange);
   outline-offset: 2px;
 }
 
@@ -90,20 +115,20 @@ button:disabled {
   }
 }
 
-/* v3 — scroll-reveal word colouring (grey -> black, accents -> orange) */
+/* v3 — scroll-reveal word colouring (grey -> ink, accents -> orange) */
 .rw {
   color: #cbccce;
   transition: color 0.4s ease;
 }
 .rw.on {
-  color: #141414;
+  color: var(--forest);
 }
 .rw.accent.on {
-  color: #ff8a00;
+  color: var(--orange);
 }
 @media (prefers-reduced-motion: reduce) {
-  .rw { color: #141414; }
-  .rw.accent { color: #ff8a00; }
+  .rw { color: var(--forest); }
+  .rw.accent { color: var(--orange); }
 }
 
 /* v3 — hero intro choreography (plays once on first load).
@@ -149,18 +174,6 @@ button:disabled {
 @keyframes heroZoom {
   from { opacity: 0.35; transform: scale(1.12); }
   to { opacity: 1; transform: scale(1); }
-}
-
-/* Surface toggle — flip every white section to warm beige when the nav switch
-   sets data-theme="beige" on <html>. Higher specificity than Tailwind's .bg-white. */
-:root {
-  --surface: #ffffff;
-}
-html[data-theme="beige"] {
-  --surface: #fff3e2;
-}
-html[data-theme="beige"] :is(section, main).bg-white {
-  background-color: #fff3e2;
 }
 
 /* v3 — generic scroll-into-view reveal (fade + rise). JS adds .in when the
@@ -243,7 +256,7 @@ html[data-theme="beige"] :is(section, main).bg-white {
 .tt-prose li { margin-top: 0.4em; color: color-mix(in srgb, var(--forest) 80%, transparent); }
 .tt-prose li > p { margin: 0; }
 .tt-prose blockquote {
-  border-left: 4px solid var(--lime);
+  border-left: 4px solid var(--orange);
   padding-left: 1.5rem;
   font-family: var(--font-oswald), sans-serif;
   font-weight: 600;
@@ -308,7 +321,7 @@ html[data-theme="beige"] :is(section, main).bg-white {
   padding: 0.7rem 1rem;
   color: color-mix(in srgb, var(--forest) 80%, transparent);
 }
-.tt-prose mark { background: var(--lime); color: var(--forest); padding: 0 0.15em; border-radius: 3px; }
+.tt-prose mark { background: var(--light-blue); color: var(--forest); padding: 0 0.15em; border-radius: 3px; }
 
 /* Callback (callout) block — colour set by the user to a brand colour. */
 .tt-prose .tt-callout {
@@ -324,7 +337,7 @@ html[data-theme="beige"] :is(section, main).bg-white {
 .tt-callout--forest     { background: color-mix(in srgb, var(--forest) 88%, black); border-left-color: var(--lime); color: var(--cream); }
 .tt-callout--forest p, .tt-callout--forest strong { color: var(--cream); }
 .tt-callout--cream      { background: var(--cream); border-left-color: var(--orange); }
-.tt-callout--lime       { background: color-mix(in srgb, var(--lime) 35%, white); border-left-color: var(--forest); }
+.tt-callout--lime       { background: color-mix(in srgb, var(--light-blue) 60%, white); border-left-color: var(--forest); }
 
 /* Belangrijk (Important) block — orange emphasis with a warning icon. */
 .tt-prose .tt-important {
@@ -405,3 +418,46 @@ html[data-theme="beige"] :is(section, main).bg-white {
 .nice-scroll::-webkit-scrollbar-thumb:hover {
   background-color: color-mix(in srgb, var(--forest) 40%, transparent);
 }
+
+/* ===========================================================================
+   Brandbook 2026 surface rules. The site was built on a green brand where
+   big "forest" blocks carried cream text; the brandbook keeps dark for text
+   and logo only, so those blocks become orange (white text + white accents)
+   and the footer / "ons verhaal" timeline become light blue with dark text.
+   =========================================================================== */
+.bg-forest.text-cream {
+  background-color: var(--orange);
+  --lime: #ffffff;
+}
+.bg-forest.text-cream .bg-orange { background-color: var(--forest); }
+.bg-forest.text-cream .text-orange { color: #ffffff; }
+.bg-forest.text-cream .font-hand { color: #ffffff; }
+
+footer.bg-forest.text-cream,
+.history-band.bg-forest.text-cream {
+  background-color: var(--light-blue);
+  --cream: #1c1c1c;
+}
+footer.bg-forest.text-cream { --lime: #1c1c1c; }
+.history-band.bg-forest.text-cream { --lime: #ffffff; }
+footer.bg-forest.text-cream .bg-orange { color: #ffffff; }
+
+/* Brandbook rule 02: no small orange text on light blue — it turns dark.
+   Orange stays for buttons/blocks (grote vlakken) and the logo. */
+:is(.bg-light-blue, .bg-\[var\(--light-blue\)\]) :is(p, li, span, label):not([class*="bg-"]) .text-orange,
+:is(.bg-light-blue, .bg-\[var\(--light-blue\)\]) :is(p, li, span, label).text-orange:not([class*="bg-"]) {
+  color: var(--forest);
+}
+
+/* Light-blue buttons/badges, orange years + partner title, order form before
+   the groothandel block on /producten. */
+:is(.kc-card-btn, .kc-tag-btn, .kc-tag, .kc-veggie):is(.bg-forest, .bg-orange, .bg-lime),
+.bg-forest.text-cream .kc-card-btn {
+  background-color: var(--light-blue);
+  color: var(--forest);
+}
+.kc-year { color: var(--orange); }
+.kc-partners-title { color: var(--orange); }
+.kc-producten { display: flex; flex-direction: column; }
+.kc-groothandel { order: 1; }
+.kc-producten > footer { order: 2; }
