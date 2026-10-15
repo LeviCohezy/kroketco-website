@@ -247,7 +247,7 @@ export default function PartnersView({ partners }: { partners: PartnerCard[] }) 
         </div>
       </section>
 
-      <ContactForm source="partners" section="partners.contact" />
+      <ContactForm source="partners" section="partners.contact" event="contact_partneraanvraag" />
 
       <PageFooter />
     </main>

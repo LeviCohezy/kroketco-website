@@ -91,7 +91,7 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
           </Link>
 
           {/* Contact form at the end — shown by default; the CMS can turn it off. */}
-          {formCopy ? <PostContactForm slug={p.slug} copy={formCopy} /> : null}
+          {formCopy ? <PostContactForm slug={p.slug} copy={formCopy} event="contact_partneraanvraag" /> : null}
         </div>
       </section>
 

@@ -161,7 +161,7 @@ export default async function GroendaalPage() {
       </section>
 
       {/* 5. PARTNER WITH US */}
-      <ContactForm source="samenwerking-groendal" section="groendaal.contact" />
+      <ContactForm source="samenwerking-groendal" section="groendaal.contact" event="contactformulier_groendal" />
 
       <PageFooter />
     </main>

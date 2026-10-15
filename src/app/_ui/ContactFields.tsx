@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useContent } from "./ContentProvider";
 import { EditableText } from "@/app/_ui/edit/Editable";
+import { trackFormSubmit, type FormEventName } from "@/lib/gtm";
 
 // The actual contact form fields + submit logic, posting to the public
 // /api/contact endpoint. Kept separate from any surrounding card/heading so it
@@ -25,9 +26,12 @@ const field =
 export default function ContactFields({
   source = "",
   center = false,
+  event = "contactformulier",
 }: {
   source?: string;
   center?: boolean;
+  /** GTM data-layer event pushed on a successful submit (unique per form). */
+  event?: FormEventName;
 }) {
   const t = useContent("global.contact");
   const [name, setName] = useState("");
@@ -50,6 +54,7 @@ export default function ContactFields({
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Versturen mislukt");
+      trackFormSubmit(event, source);
       setStatus("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Versturen mislukt");

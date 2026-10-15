@@ -1,6 +1,7 @@
 import ContactFields from "./ContactFields";
 import { EditableText } from "./edit/Editable";
 import type { SectionId } from "@/lib/content/registry";
+import type { FormEventName } from "@/lib/gtm";
 
 // Standard contact form section: a light-blue card with an eyebrow, heading and
 // intro line, wrapping the shared ContactFields. The heading copy is inline-
@@ -11,9 +12,12 @@ const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 }
 export default function ContactForm({
   source = "",
   section = "global.contact",
+  event,
 }: {
   source?: string;
   section?: SectionId;
+  /** GTM data-layer event for this form; defaults to the generic "contactformulier". */
+  event?: FormEventName;
 }) {
   return (
     <section id="contact" className="px-6 pb-16 sm:px-12 sm:pb-24 lg:px-16">
@@ -32,7 +36,7 @@ export default function ContactForm({
           />
           <EditableText as="p" section={section} field="text" className="mt-4 block max-w-xl text-forest/75" />
           <div className="mt-8">
-            <ContactFields source={source} />
+            <ContactFields source={source} event={event} />
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ContentOf } from "@/lib/content/registry";
 import Multiline from "../../_ui/Multiline";
+import { trackFormSubmit, type FormEventName } from "@/lib/gtm";
 
 // Editable copy (Nieuws → "Nieuwsbericht — contactformulier" or Partners →
 // "Partnerpagina — contactformulier"); both sections share the same fields.
@@ -10,7 +11,16 @@ type FormCopy = ContentOf<"nieuws.postForm"> | ContentOf<"partners.postForm">;
 
 // Contact form rendered at the end of a blog post when the post has
 // "Formulier tonen" enabled. Posts to the public /api/contact endpoint.
-export function PostContactForm({ slug, copy }: { slug: string; copy: FormCopy }) {
+export function PostContactForm({
+  slug,
+  copy,
+  event = "contactformulier",
+}: {
+  slug: string;
+  copy: FormCopy;
+  /** GTM data-layer event pushed on a successful submit (unique per form). */
+  event?: FormEventName;
+}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -29,6 +39,7 @@ export function PostContactForm({ slug, copy }: { slug: string; copy: FormCopy }
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || copy.error);
+      trackFormSubmit(event, slug);
       setStatus("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : copy.error);

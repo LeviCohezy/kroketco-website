@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useContent } from "./ContentProvider";
 import { EditableText } from "@/app/_ui/edit/Editable";
+import { trackFormSubmit } from "@/lib/gtm";
 
 const OSWALD = { fontFamily: "var(--font-oswald), sans-serif", fontWeight: 600 } as const;
 
@@ -32,6 +33,7 @@ export default function NewsletterForm({ compact = false }: { compact?: boolean 
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Inschrijven mislukt");
+      trackFormSubmit("nieuwsbrief", compact ? "footer" : "nieuws");
       setStatus("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Inschrijven mislukt");
