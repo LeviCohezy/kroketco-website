@@ -13,6 +13,7 @@ const postFormFields = (where: string) =>
     { key: "text", type: "textarea", label: "Tekst", help: "Korte zin onder de titel", default: "Vragen of interesse? Laat je gegevens achter en we reageren snel." },
     { key: "name", type: "text", label: "Veld: naam", default: "Naam" },
     { key: "email", type: "text", label: "Veld: e-mail", default: "E-mail" },
+    { key: "phone", type: "text", label: "Veld: telefoon", default: "Telefoonnummer (optioneel)" },
     { key: "message", type: "text", label: "Veld: bericht", default: "Bericht" },
     { key: "button", type: "text", label: "Verstuurknop", default: "Versturen" },
     { key: "sending", type: "text", label: "Knop tijdens versturen", help: "Tekst op de knop terwijl het bericht verstuurd wordt", default: "Bezig…" },

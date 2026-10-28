@@ -23,6 +23,7 @@ export function PostContactForm({
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState("");
@@ -32,10 +33,11 @@ export function PostContactForm({
     setStatus("sending");
     setError("");
     try {
+      const composed = phone.trim() ? `Telefoon: ${phone.trim()}\n\n${message}` : message;
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message, postSlug: slug }),
+        body: JSON.stringify({ name, email, message: composed, postSlug: slug }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || copy.error);
@@ -83,6 +85,10 @@ export function PostContactForm({
             <input type="email" className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} required />
           </label>
         </div>
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-semibold text-forest">{copy.phone}</span>
+          <input type="tel" autoComplete="tel" className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} />
+        </label>
         <label className="block">
           <span className="mb-1.5 block text-sm font-semibold text-forest">{copy.message}</span>
           <textarea
