@@ -50,6 +50,7 @@ the `Dockerfile`).
    | `ADMIN_PASSWORD` | a long, random password (**not** the dev default) |
    | `CMS_DB_PATH` | `/home/uXXXXXXXXX/cms-data/cms.db` |
    | `UPLOAD_DIR` | `/home/uXXXXXXXXX/cms-data/uploads` |
+   | `RESEND_API_KEY` | API key from resend.com — contact forms + password reset are e-mailed to info@kroketco.be |
 
    The key point: `cms-data` sits **outside** the deployed project folder, so it
    isn't wiped on redeploy. Create that folder if the panel doesn't auto-create it.

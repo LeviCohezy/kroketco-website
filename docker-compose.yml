@@ -9,6 +9,8 @@ services:
       CMS_DB_PATH: /data/cms.db
       UPLOAD_DIR: /data/uploads
       # Optional — e-mail (contact forms + password reset). Read from .env.
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM: ${RESEND_FROM:-}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-}
       SMTP_USER: ${SMTP_USER:-}

@@ -4,20 +4,31 @@ import type { ContactRequest } from "./types";
 // ---------------------------------------------------------------------------
 // Contact-form email notifications.
 //
-// Submissions are always saved to the DB (the CRM). On top of that, if SMTP is
-// configured via env vars, we also email a notification to CONTACT_TO
-// (e.g. info@kroketco.be). Email is best-effort: a failure here must never make
-// the public contact endpoint fail — the request is already persisted.
+// Submissions are always saved to the DB (the CRM). On top of that we email a
+// notification to CONTACT_TO (default info@kroketco.be). Email is best-effort:
+// a failure here must never make the public contact endpoint fail — the request
+// is already persisted.
 //
-// Required env vars to enable email:
+// Mail is sent through Resend's HTTP API (no SMTP needed):
+//   RESEND_API_KEY  API key from resend.com
+//   RESEND_FROM     optional sender. Defaults to onboarding@resend.dev, which
+//                   only delivers to the e-mail the Resend account was created
+//                   with — fine as long as that is the recipient. Verify a
+//                   domain in Resend to send from e.g. website@kroketco.be.
+//
+// Fallback when RESEND_API_KEY is unset — SMTP, if configured:
 //   SMTP_HOST   e.g. smtp.hostinger.com
 //   SMTP_PORT   e.g. 465 (SSL) or 587 (STARTTLS)
 //   SMTP_USER   the mailbox login, e.g. info@kroketco.be
 //   SMTP_PASS   the mailbox password
-// Optional:
 //   SMTP_FROM   From address (defaults to SMTP_USER)
-//   CONTACT_TO  recipient (defaults to SMTP_USER)
+//
+// CONTACT_TO  recipient for the forms (default info@kroketco.be)
 // ---------------------------------------------------------------------------
+
+const DEFAULT_TO = "info@kroketco.be";
+
+type Mail = { to: string; subject: string; text: string; html: string; replyTo?: string };
 
 function smtpConfig() {
   const host = process.env.SMTP_HOST;
@@ -31,8 +42,52 @@ function smtpConfig() {
     secure: port === 465, // 465 = implicit TLS; 587 = STARTTLS
     auth: { user, pass },
     from: process.env.SMTP_FROM || user,
-    to: process.env.CONTACT_TO || user,
   };
+}
+
+// Deliver one e-mail via Resend, else SMTP. Returns true when it was handed
+// off successfully, false otherwise; never throws.
+async function deliver(mail: Mail, label: string): Promise<boolean> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (apiKey) {
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: process.env.RESEND_FROM || "Kroketco website <onboarding@resend.dev>",
+          to: [mail.to],
+          subject: mail.subject,
+          text: mail.text,
+          html: mail.html,
+          ...(mail.replyTo ? { reply_to: mail.replyTo } : {}),
+        }),
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (!res.ok) {
+        console.error(`[mailer] Resend refused ${label} (${res.status}):`, await res.text().catch(() => ""));
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error(`[mailer] Resend request failed for ${label}:`, err);
+      return false;
+    }
+  }
+
+  const cfg = smtpConfig();
+  if (!cfg) {
+    console.warn(`[mailer] No RESEND_API_KEY or SMTP configured — ${label} not e-mailed.`);
+    return false;
+  }
+  try {
+    const transporter = nodemailer.createTransport({ host: cfg.host, port: cfg.port, secure: cfg.secure, auth: cfg.auth });
+    await transporter.sendMail({ from: cfg.from, ...mail });
+    return true;
+  } catch (err) {
+    console.error(`[mailer] Failed to send ${label}:`, err);
+    return false;
+  }
 }
 
 function escapeHtml(s: string): string {
@@ -44,34 +99,20 @@ function escapeHtml(s: string): string {
 }
 
 // Send a notification email for a new contact request. Resolves to true when an
-// email was sent, false when SMTP isn't configured, and never throws.
+// email was sent, false otherwise, and never throws.
 export async function sendContactNotification(req: ContactRequest): Promise<boolean> {
-  const cfg = smtpConfig();
-  if (!cfg) {
-    console.warn("[mailer] SMTP not configured — contact saved to CRM but no email sent.");
-    return false;
-  }
+  const source = req.postSlug ? ` (via: ${req.postSlug})` : "";
+  const lines = [
+    `Naam: ${req.name}`,
+    `E-mail: ${req.email}`,
+    req.postSlug ? `Bron: ${req.postSlug}` : "",
+    "",
+    req.message,
+  ].filter(Boolean);
 
-  try {
-    const transporter = nodemailer.createTransport({
-      host: cfg.host,
-      port: cfg.port,
-      secure: cfg.secure,
-      auth: cfg.auth,
-    });
-
-    const source = req.postSlug ? ` (via: ${req.postSlug})` : "";
-    const lines = [
-      `Naam: ${req.name}`,
-      `E-mail: ${req.email}`,
-      req.postSlug ? `Bron: ${req.postSlug}` : "",
-      "",
-      req.message,
-    ].filter(Boolean);
-
-    await transporter.sendMail({
-      from: cfg.from,
-      to: cfg.to,
+  return deliver(
+    {
+      to: process.env.CONTACT_TO || DEFAULT_TO,
       replyTo: req.email,
       subject: `Nieuw contactformulier${source} — ${req.name}`,
       text: lines.join("\n"),
@@ -82,32 +123,20 @@ export async function sendContactNotification(req: ContactRequest): Promise<bool
         ${req.postSlug ? `<br/><strong>Bron:</strong> ${escapeHtml(req.postSlug)}` : ""}</p>
         <p style="white-space:pre-wrap">${escapeHtml(req.message)}</p>
       `,
-    });
-    return true;
-  } catch (err) {
-    console.error("[mailer] Failed to send contact notification:", err);
-    return false;
-  }
+    },
+    "contact notification",
+  );
 }
 
 // Password-reset e-mail for the admin. Goes to RESET_TO (default
-// info@kroketco.be). Returns false when SMTP isn't configured or sending fails;
-// never throws.
+// info@kroketco.be). Returns false when sending fails; never throws.
 export async function sendPasswordResetEmail(opts: { link: string; ip: string; at: Date }): Promise<boolean> {
-  const cfg = smtpConfig();
-  const to = process.env.RESET_TO || "info@kroketco.be";
   const when = opts.at.toLocaleString("nl-BE", { timeZone: "Europe/Brussels", dateStyle: "long", timeStyle: "medium" });
-  if (!cfg) {
-    console.warn("[mailer] SMTP not configured — password reset e-mail not sent.");
-    // Local development only: print the link so the flow can still be tested.
-    if (process.env.NODE_ENV !== "production") console.warn(`[mailer] Reset link (dev): ${opts.link}`);
-    return false;
-  }
-  try {
-    const transporter = nodemailer.createTransport({ host: cfg.host, port: cfg.port, secure: cfg.secure, auth: cfg.auth });
-    await transporter.sendMail({
-      from: cfg.from,
-      to,
+  // Local development only: print the link so the flow can be tested offline.
+  if (process.env.NODE_ENV !== "production") console.warn(`[mailer] Reset link (dev): ${opts.link}`);
+  return deliver(
+    {
+      to: process.env.RESET_TO || DEFAULT_TO,
       subject: "Kroketco — wachtwoord resetten",
       text: [
         "Er is gevraagd om het admin-wachtwoord van kroketco.be te resetten.",
@@ -127,10 +156,7 @@ export async function sendPasswordResetEmail(opts: { link: string; ip: string; a
         <p><a href="${escapeHtml(opts.link)}" style="display:inline-block;background:#ff8a00;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">Kies een nieuw wachtwoord</a></p>
         <p style="color:#666;font-size:13px">De link is 15 minuten geldig en werkt één keer.<br/>Niet zelf aangevraagd? Negeer deze e-mail — het huidige wachtwoord blijft gewoon werken.</p>
       `,
-    });
-    return true;
-  } catch (err) {
-    console.error("[mailer] Failed to send password reset e-mail:", err);
-    return false;
-  }
+    },
+    "password reset e-mail",
+  );
 }
