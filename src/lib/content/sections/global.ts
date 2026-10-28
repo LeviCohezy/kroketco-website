@@ -112,6 +112,7 @@ export const globalSections = defineSections({
       },
       { key: "name", type: "text", label: "Veld: naam", default: "Naam" },
       { key: "email", type: "text", label: "Veld: e-mail", default: "E-mail" },
+      { key: "phone", type: "text", label: "Veld: telefoon", default: "Telefoonnummer" },
       { key: "subject", type: "text", label: "Veld: onderwerp", default: "Onderwerp" },
       { key: "message", type: "text", label: "Veld: bericht", default: "Je bericht" },
       { key: "button", type: "text", label: "Verstuurknop", default: "Verstuur" },

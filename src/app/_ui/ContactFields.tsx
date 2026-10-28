@@ -36,6 +36,7 @@ export default function ContactFields({
   const t = useContent("global.contact");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
@@ -46,7 +47,11 @@ export default function ContactFields({
     setStatus("sending");
     setError("");
     try {
-      const composed = subject.trim() ? `Onderwerp: ${subject.trim()}\n\n${message}` : message;
+      const header = [
+        phone.trim() ? `Telefoon: ${phone.trim()}` : "",
+        subject.trim() ? `Onderwerp: ${subject.trim()}` : "",
+      ].filter(Boolean);
+      const composed = header.length ? `${header.join("\n")}\n\n${message}` : message;
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,7 +89,17 @@ export default function ContactFields({
           required
         />
       </div>
-      <input className={field} placeholder={t.subject} value={subject} onChange={(e) => setSubject(e.target.value)} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <input
+          type="tel"
+          autoComplete="tel"
+          className={field}
+          placeholder={t.phone}
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <input className={field} placeholder={t.subject} value={subject} onChange={(e) => setSubject(e.target.value)} />
+      </div>
       <textarea
         className={`resize-y ${field}`}
         rows={5}
